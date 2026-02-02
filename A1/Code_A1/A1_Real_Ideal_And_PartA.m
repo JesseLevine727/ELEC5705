@@ -354,4 +354,59 @@ text(x_box, y_box, metrics_txt, ...
 hold off;
 
 
+%%
+quantize_nl(x, a3_star, Vpp, LSB, N);
+Ns = 200;
 
+y_nl = quantize_nl(x, a3_star, Vpp, LSB, N);   % returns quantized levels (volts)
+code_nl = floor((y_nl + Vpp/2)/LSB);           % recover codes from y_nl if needed
+
+figure;
+stairs(t(1:Ns)*1e9, y(1:Ns), 'LineWidth', 1); hold on;
+stairs(t(1:Ns)*1e9, y_nl(1:Ns), 'LineWidth', 1);
+grid on; xlabel('Time (ns)'); ylabel('Voltage (V)');
+title('Quantized output: ideal vs nonlinear');
+legend('y[n]','y_{nl}[n]');
+
+figure;
+stem(t(1:Ns)*1e9, code(1:Ns), 'filled'); hold on;
+stem(t(1:Ns)*1e9, code_nl(1:Ns), 'filled');
+grid on; xlabel('Time (ns)'); ylabel('ADC code');
+title('Digital codes: ideal vs nonlinear');
+legend('c[n]','c_{nl}[n]');
+%%
+%% ---- Plot resulting digital signal due to the nonlinearity ----
+Ns = 200;
+
+% 1) Nonlinear analog samples (pre-ADC)
+x_nl = x + a3_star*(x.^3);     % (if you also have a2: x_nl = x + a2*x.^2 + a3*x.^3)
+x_nl_clip = min(max(x_nl, -Vpp/2), (Vpp/2 - LSB));  % match your ADC clipping rule
+
+% 2) Quantize (codes + reconstructed DAC level y_nl)
+code_nl = floor((x_nl_clip + Vpp/2)/LSB);
+code_nl = max(0, min(code_nl, 2^N - 1));
+y_nl = (code_nl + 0.5)*LSB - Vpp/2;
+
+% 3A) Plot: analog vs nonlinear analog (pre-ADC)
+figure;
+plot(t(1:Ns)*1e9, x(1:Ns), 'LineWidth', 1); hold on;
+plot(t(1:Ns)*1e9, x_nl(1:Ns), 'LineWidth', 1);
+grid on; xlabel('Time (ns)'); ylabel('Voltage (V)');
+title('Analog samples: x[n] vs nonlinear x_{nl}[n]');
+legend('x[n]','x_{nl}[n]');
+
+% 3B) Plot: ideal quantized vs nonlinear quantized (in volts)
+figure;
+stairs(t(1:Ns)*1e9, y(1:Ns), 'LineWidth', 1); hold on;
+stairs(t(1:Ns)*1e9, y_nl(1:Ns), 'LineWidth', 1);
+grid on; xlabel('Time (ns)'); ylabel('Voltage (V)');
+title('Digital output (DAC levels): y[n] vs y_{nl}[n]');
+legend('y[n] (ideal ADC)','y_{nl}[n] (with nonlinearity)');
+
+% 3C) Plot: resulting ADC codes (digital sequence)
+figure;
+stem(t(1:Ns)*1e9, code(1:Ns), 'filled'); hold on;
+stem(t(1:Ns)*1e9, code_nl(1:Ns), 'filled');
+grid on; xlabel('Time (ns)'); ylabel('ADC code');
+title('ADC output codes: c[n] vs c_{nl}[n]');
+legend('c[n] (ideal ADC)','c_{nl}[n] (with nonlinearity)');
