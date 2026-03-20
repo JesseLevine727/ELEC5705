@@ -1,0 +1,389 @@
+ELEC5705 Data Converters
+Midterm Practice - Matching Solutions (4 In-Depth Questions)
+
+Companion to:
+Midterm_Practice_4_InDepth_Questions.pdf
+
+======================================================================
+Solution 1 - ADC Characterization Through a Lossy Channel
+======================================================================
+
+(a) Characterization methodology
+
+Goal: characterize a 6-bit, 10 GS/s ADC over full dynamic range when channel has ~6 dB loss at 5 GHz.
+
+Recommended flow:
+1) Channel characterization:
+   - Measure/estimate channel transfer H(f) over 0..5 GHz.
+   - Build digital pre-emphasis F(f) ~ 1/H(f) within transmitter swing constraints.
+2) Stimulus plan:
+   - Coherent single-tone sweep over multiple bins from low f to near Nyquist.
+   - Multi-level amplitude sweep (e.g., -1 dBFS to -30 dBFS equivalent at ADC input).
+3) Amplitude control:
+   - Use DAC amplitude scaling + optional digital pre-emphasis to recover near-full-scale at ADC input.
+   - Enforce no clipping at DAC output.
+4) Calibration:
+   - At each test frequency, close loop on measured ADC-input amplitude (or estimated from codes) and retune drive.
+5) Dynamic-range validity criterion:
+   - Demonstrate coverage from near full-scale down to noise floor (for 6-bit ADC).
+   - Report per-frequency SINAD/SFDR/ENOB with pass/fail margins.
+
+(b) MATLAB skeleton for coherent tones with channel and pre-emphasis
+
+% Parameters
+fs = 10e9; M = 8192; Nbits = 6; VFS = 2.0;
+k_list = [17 53 211 503 911 1703 2047 3071 4019]; % coherent bins
+n = (0:M-1).';
+t = n/fs;
+
+% Example channel impulse response from part (e)
+h = [1 0.5 0.25];
+
+for k = k_list
+    fin = k*fs/M;
+    A = 0.95*(VFS/2);
+    x = A*sin(2*pi*fin*t);
+
+    % Optional pre-emphasis placeholder:
+    % x_pre = filter(b_pre, a_pre, x);  % designed from H(f)
+    x_pre = x;
+
+    % Channel effect
+    y_in = conv(x_pre, h, 'same');
+
+    % Normalize if needed to hit target ADC input amplitude
+    y_in = y_in * (0.9*(VFS/2)/max(abs(y_in)));
+
+    % ADC quantization
+    Delta = VFS/2^Nbits;
+    y_clip = min(max(y_in, -VFS/2), VFS/2 - Delta);
+    code = floor((y_clip + VFS/2)/Delta);
+    code = max(0,min(code,2^Nbits-1));
+    y_adc = (code + 0.5)*Delta - VFS/2;
+
+    % Metrics from FFT function (user-defined)
+    % [SNR,SINAD,SFDR,ENOB] = adc_metrics_fft(y_adc,fs,M,VFS,...);
+end
+
+(c) FFT metrics with explicit bin rules
+
+For coherent test:
+1) Compute single-sided power spectrum P[k].
+2) Identify fundamental bin k1.
+3) Signal power Ps = sum around k1 (guard bins +/-g).
+4) For SINAD: exclude DC + signal bins only, integrate remainder -> Pnd.
+   SINAD = 10log10(Ps/Pnd)
+5) For SNR: also exclude harmonic bins (2k1,3k1,... folded/aliased) -> Pn.
+   SNR = 10log10(Ps/Pn)
+6) SFDR: largest spur excluding DC + fundamental region:
+   SFDR = 10log10(Ps/Pspur_max)
+7) ENOB = (SINAD - 1.76)/6.02
+
+(d) PRBS PAM-4 mission-mode characterization
+
+Can estimate robustly:
+- Input-referred noise statistics (with equalization/model assumptions)
+- Clipping probability/headroom
+- Transition-dependent errors, ISI impact
+- Histogram/code density and effective gain/offset trends
+
+Cannot robustly extract (without sine-like tone):
+- Classical single-tone SFDR
+- Harmonic-based THD
+- Standard SINAD from pure-tone decomposition
+
+Possible workaround:
+- Use spectral methods on known PRBS sequence and estimate EVM/SNR-like metrics.
+
+(e) Channel model derivation and code
+
+h[n] = delta[n] + 0.5*delta[n-1] + 0.25*delta[n-2]
+=> y[n] = x[n] + 0.5x[n-1] + 0.25x[n-2]
+
+For sine x[n] = A sin(2*pi*fin*n/fs):
+- y[n] is same tone with amplitude/phase modified by H(e^jw).
+
+For PRBS-PAM4 symbols s[n] in {-3,-1,+1,+3} (scaled):
+- y[n] = s[n] + 0.5s[n-1] + 0.25s[n-2]
+
+MATLAB:
+% sine case
+y_sine = filter(h,1,x);
+% PRBS PAM4 case
+sym = pam4_symbols;               % user sequence
+y_prbs = filter(h,1,sym);
+
+(f) Minimum dynamic range derivation idea
+
+Need full 6-bit resolution at ADC input:
+- LSB_ADC = VFS_ADC/2^6
+
+If worst-case channel attenuation at Nyquist is 6 dB (voltage ratio ~ 0.5),
+transmitter side must provide ~2x voltage swing at that frequency (ignoring margin).
+
+Include margin m (dB) for equalization and uncertainty:
+- Required TX swing ratio = 10^((6 + m)/20)
+
+Condition to avoid resolution sacrifice:
+- Effective ADC input swing after channel/equalization uncertainty >= target near-full-scale swing.
+
+Validation:
+- Sweep TX amplitude and verify measured ENOB near Nyquist does not drop below target.
+
+
+======================================================================
+Solution 2 - Fundamental Metrics Under Non-Idealities
+======================================================================
+
+Given: N=8, VFS=2 Vpp, fs=10 GS/s.
+
+(a) Ideal quantities
+
+LSB:
+Delta = VFS/2^N = 2/256 = 7.8125 mV
+
+Quantization noise power (ideal uniform model):
+sigma_q^2 = Delta^2/12
+          = (7.8125e-3)^2 / 12
+          = 5.086e-6 V^2
+
+Ideal full-scale sine SNR:
+SNR_ideal = 6.02N + 1.76 = 6.02*8 + 1.76 = 49.92 dB
+
+Assumptions:
+- Error uniformly distributed in [-Delta/2,+Delta/2]
+- Uncorrelated with input (approx valid for many practical cases)
+
+(b) FFT metrics from given dBFS values
+
+Given:
+Psig = -0.8 dBFS
+Pspur = -53 dBFS
+Pnd = -45.5 dBFS  (noise+distortion excluding DC/fundamental)
+
+SFDR(dBc):
+SFDR_dBc = Psig - Pspur = (-0.8)-(-53)=52.2 dBc
+
+SFDR(dBFS): largest spur relative to full scale:
+SFDR_dBFS = -Pspur = 53 dBFS below full scale
+
+SINAD:
+SINAD = Psig - Pnd = (-0.8)-(-45.5)=44.7 dB
+
+ENOB:
+ENOB = (SINAD - 1.76)/6.02
+     = (44.7 - 1.76)/6.02
+     = 7.13 bits
+
+(c) Effect of cubic nonlinearity x_nl = x + a3*x^3
+
+For sinusoid input:
+- Cubic term generates strong odd-order harmonics (3rd dominant, then 5th, etc.).
+As a3 increases:
+- Discrete harmonics rise quickly.
+- SFDR drops due to largest spur rise.
+- SINAD also drops (harmonics included in N+D).
+Often trend:
+- SFDR deterioration is very visible first via a single dominant spur.
+
+(d) Jitter limit frequency for sigma_t=250 fs, target SNR=50 dB
+
+SNR_jitter = -20log10(2*pi*fin*sigma_t)
+Set SNR_jitter = 50 dB:
+2*pi*fin*sigma_t = 10^(-50/20)=0.0031623
+fin = 0.0031623/(2*pi*250e-15)
+fin = 2.01e9 Hz ~ 2.0 GHz
+
+Interpretation:
+- Above about 2 GHz input frequency, jitter alone pushes SNR below 50 dB.
+
+(e) Sweep framework and regime separation
+
+For each grid point (a3, sigma_n, sigma_t):
+1) Generate sampled input with timing jitter:
+   xj[n] = A*sin(2*pi*fin*(n/fs + dt[n])).
+2) Add nonlinearity: xnl = xj + a3*xj.^3.
+3) Add AWGN: x = xnl + sigma_n*randn.
+4) Quantize and compute SNR/SINAD/SFDR/ENOB.
+
+Regime classification heuristic:
+- If SFDR collapses while floor modest: distortion-limited.
+- If noise floor rises broadly and SNR/SINAD track: noise-limited.
+- If degradation scales strongly with fin per jitter law: jitter-limited.
+
+
+======================================================================
+Solution 3 - StrongARM Latch Comparator
+======================================================================
+
+Given: 5-bit SAR, 500 MS/s, range=450 mV, VDD=1 V.
+
+(a) LSB and 0.5 LSB sensitivity
+
+LSB = 450 mV / 2^5 = 14.0625 mV
+0.5 LSB = 7.03125 mV
+
+So minimum differential decision target ~7 mV.
+
+(b) Three phases
+
+1) Precharge (CLK low):
+   - Tail device off; precharge devices on.
+   - Internal nodes equalized near VDD.
+2) Amplification (early CLK high):
+   - Tail on; differential pair converts DeltaVin to differential discharge current.
+   - Small voltage difference builds at internal nodes.
+3) Regeneration:
+   - Cross-coupled positive feedback dominates.
+   - Differential grows exponentially to rail-to-rail logic.
+
+(c) Exponential decision law
+
+At start of regeneration, seed difference = DeltaV0.
+Model:
+DeltaV(t) = DeltaV0 * exp(t/tau_reg)
+with tau_reg ~ Ceff/gm_reg
+
+Solve for time to logic threshold Vlogic:
+t_dec = tau_reg * ln(Vlogic/DeltaV0)
+
+Implications:
+- Larger gm_reg -> smaller tau_reg -> faster decisions.
+- Larger DeltaV0 (better preamp seed) reduces log term.
+- Larger capacitance slows regeneration.
+
+(d) Metastability criterion
+
+Metastability occurs if available time Tavail < required t_dec.
+A practical criterion:
+tau_reg * ln(Vlogic/DeltaV0,min) <= Tavail - Tsafety
+
+Where DeltaV0,min includes worst-case input minus offset/noise margin.
+If violated, unresolved/late decisions increase bit-error rate.
+
+(e) Kickback mechanisms and mitigation
+
+Mechanisms:
+1) Capacitive feedthrough from rapidly switching internal nodes through transistor parasitics.
+2) Input-pair charge redistribution during abrupt regeneration.
+
+Mitigation:
+- Strong S/H isolation before compare
+- Lower source impedance at comparator input
+- Careful clock edge shaping / timing separation
+- Shielded routing, differential symmetry
+- Optional preamp or kickback-reduction switches
+
+(f) Behavioral comparator model (MATLAB-like)
+
+function [bit, timeout] = comp_model(vp, vn, p)
+% p: struct with Vos, sigma_n, tau, Tavail, Vlogic
+vin_diff = (vp - vn) + p.Vos + p.sigma_n*randn();
+DeltaV0 = max(abs(vin_diff), 1e-6);        % avoid log singularity
+t_dec = p.tau * log(p.Vlogic/DeltaV0);
+timeout = (t_dec > p.Tavail);
+if timeout
+    bit = rand > 0.5;                       % metastable/random fallback
+else
+    bit = (vin_diff >= 0);
+end
+end
+
+Integration in SAR loop:
+- At each bit trial, call comp_model(Vxp, Vxn, params) and update SAR bit accordingly.
+
+
+======================================================================
+Solution 4 - Cap-DAC Charge Redistribution and SAR Bit Cycling
+======================================================================
+
+(a) Top-plate update derivation
+
+Let top-plate node be Vx and total capacitance Ct = sum(Ci).
+After sampling, top-node charge is fixed when floating.
+
+General relation:
+Q = sum_i Ci*(Vx - Vbi)
+When bottoms switch from Vbi,old to Vbi,new, charge conservation gives:
+sum_i Ci*(Vx,new - Vbi,new) = sum_i Ci*(Vx,old - Vbi,old)
+
+Hence:
+Vx,new = Vx,old + (1/Ct)*sum_i Ci*(Vbi,new - Vbi,old)
+
+This is the most useful SAR Cap-DAC equation.
+
+(b) Manual 6-bit trace for Vin = 0.37*VREF, VCM=0.5*VREF
+
+Using standard binary SAR ideal quantization:
+Code ~= floor((Vin/VREF)*2^6) = floor(0.37*64)=23
+23 decimal = 010111 (6-bit)
+
+Equivalent binary-search trials:
+MSB(32): 0.37 < 0.5 -> 0
+Next(16): 0.37 >= 0.25 -> 1  (residue 0.12)
+Next(8): 0.12 < 0.125 -> 0
+Next(4): 0.12 >= 0.0625 -> 1 (residue 0.0575)
+Next(2): 0.0575 >= 0.03125 -> 1 (residue 0.02625)
+Next(1): 0.02625 >= 0.015625 -> 1
+Final code: 010111
+
+(c) Mismatch model and linearity impact
+
+Ci = Ci,ideal*(1 + eps_i)
+=> bit weights deviate from exact binary ratios.
+Effects:
+- Unequal code widths -> DNL error.
+- Cumulative transfer bow/nonlinearity -> INL.
+- Tone test: deterministic code-dependent nonlinearity generates harmonics/spurs.
+
+First-order intuition:
+- Larger mismatch in MSB caps has largest transfer impact.
+
+(d) Incomplete settling and reference droop sensitivity
+
+If DAC/reference does not settle before compare:
+- Comparator sees transient residue, causing wrong bit decisions.
+Most sensitive bits:
+- Early bits (MSB, next-MSB), because error magnitude scales with large bit weights.
+Reference droop during rapid toggling:
+- Introduces pattern-dependent conversion errors and distortion.
+
+(e) MATLAB simulation outline
+
+for each sample:
+  % sample input
+  v = vin(n);
+  code = 0;
+  for b = N-1:-1:0
+      % trial set bit
+      code_try = code + 2^b;
+      vdac_ideal = VREF * code_try/2^N;
+      % mismatch model
+      vdac = vdac_ideal + mismatch_error(code_try);
+      % settling model (1st order)
+      vdac_set = vdac_prev + (vdac - vdac_prev)*(1-exp(-Tbit/tau_dac));
+      vdac_prev = vdac_set;
+      % comparator with offset/noise
+      bit = (v + Vos + sigma*randn() >= vdac_set);
+      if bit, code = code_try; end
+  end
+  codes(n)=code;
+end
+
+Post-processing:
+- Code-density histogram -> DNL/INL estimate
+- Reconstructed output FFT -> SINAD/SFDR/ENOB impact
+
+(f) Low-power switching comparison (example: monotonic switching)
+
+Monotonic/common-mode-based switching vs conventional:
+- Lower switching energy (fewer large voltage toggles)
+- Reduced common-mode movement at comparator input
+- Often easier reference drive
+Tradeoff:
+- More complex switching/control, possible sensitivity to parasitics and mismatch mapping.
+
+
+======================================================================
+End of Solutions
+======================================================================

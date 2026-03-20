@@ -1,0 +1,141 @@
+ELEC5705 Data Converters
+Midterm Practice - 4 In-Depth Questions
+
+Instructions:
+- Answer all questions.
+- Show derivations clearly and state assumptions.
+- Use coherent notation and include units.
+- Where code is requested, write MATLAB-style pseudocode or runnable MATLAB.
+
+----------------------------------------------------------------------
+Question 1 - ADC Characterization Through a Lossy Channel (Past-Midterm Style)
+----------------------------------------------------------------------
+
+A 6-bit ADC sampling at 10 GS/s is used in a wireline receiver. The transmitter side has an
+8-bit DAC used for ADC test stimulus generation. The channel between DAC and ADC introduces
+approximately 6 dB loss at 5 GHz (near ADC Nyquist).
+
+(a) Propose a complete characterization methodology that still tests the full dynamic range of
+the 6-bit ADC despite high-frequency attenuation. Your answer must include:
+    (i) stimulus selection strategy,
+    (ii) amplitude back-off / equalization approach,
+    (iii) calibration sequence,
+    (iv) criteria for “valid” dynamic-range coverage.
+
+(b) Write MATLAB code (or detailed pseudocode) to generate a coherent sinusoidal test set for
+multiple tone frequencies up to Nyquist, including channel loss and optional pre-emphasis.
+
+(c) Using FFT-based analysis, explain and implement how you will compute SNR, SINAD/SNDR,
+SFDR, and ENOB from ADC output codes. Clearly define bin exclusion rules.
+
+(d) During mission mode, only PRBS data on PAM-4 is available (no pure sine stimulus).
+Identify which ADC parameters can still be estimated robustly and which cannot.
+Justify each claim physically and statistically.
+
+(e) If the channel is modeled by sampled impulse response:
+    h[n] = delta[n] + 0.5*delta[n-1] + 0.25*delta[n-2]
+derive the received ADC input sequence for:
+    (i) sinusoidal DAC test,
+    (ii) PRBS-PAM4 stream.
+Then write MATLAB code to generate both cases.
+
+(f) Derive the minimum ADC input dynamic range required so that, after channel loss and
+equalization uncertainty, effective resolution is not sacrificed. Validate numerically in MATLAB.
+
+----------------------------------------------------------------------
+Question 2 - Fundamental Metrics Under Non-Idealities
+----------------------------------------------------------------------
+
+You are given a nominal 8-bit Nyquist ADC with VFS = 2 Vpp and fs = 10 GS/s.
+
+(a) Derive the ideal LSB, quantization noise power, and ideal SNR for full-scale sine input.
+State all equations used and assumptions behind the quantization-noise model.
+
+(b) A measured FFT (coherent, M = 8192) reports:
+    - fundamental at -0.8 dBFS,
+    - largest spur at -53 dBFS,
+    - integrated noise+distortion (excluding DC and fundamental) at -45.5 dBFS.
+Compute SFDR (dBc and dBFS), SINAD/SNDR, and ENOB.
+
+(c) The front-end has cubic nonlinearity:
+    x_nl = x + a3*x^3
+Explain how this changes harmonic distribution and therefore SFDR vs SINAD trends as a3 grows.
+
+(d) Sampling clock RMS jitter is sigma_t.
+Derive and interpret:
+    SNR_jitter = -20*log10(2*pi*fin*sigma_t)
+At what fin does jitter begin to dominate for sigma_t = 250 fs and target SNR = 50 dB?
+
+(e) Build a MATLAB sweep framework over:
+    - nonlinearity coefficient a3,
+    - additive noise sigma_n,
+    - jitter sigma_t.
+Describe how you separate noise-limited vs distortion-limited vs jitter-limited regimes.
+
+----------------------------------------------------------------------
+Question 3 - StrongARM Latch Comparator in a High-Speed SAR ADC
+----------------------------------------------------------------------
+
+A 5-bit asynchronous SAR ADC (500 MS/s, dynamic range 450 mV, VDD = 1 V) uses a StrongARM
+latch comparator.
+
+(a) Compute LSB and the minimum differential input for 0.5 LSB decision sensitivity.
+
+(b) Explain, with internal node behavior, the three operating phases:
+    (i) precharge,
+    (ii) amplification,
+    (iii) regeneration.
+Include transistor-level current-flow intuition in each phase.
+
+(c) Starting from a small initial differential seed DeltaV0 at regeneration start, derive the
+exponential decision evolution and show why:
+    t_dec ~ tau_reg*ln(Vlogic/DeltaV0)
+Explain each variable physically and how device sizing changes it.
+
+(d) Define comparator metastability in this context. Provide a quantitative design criterion
+that links available decision time, expected minimum DeltaVin, and acceptable bit-error risk.
+
+(e) Explain kickback mechanisms through capacitive coupling and rapid internal transitions.
+How can S/H timing, source impedance, and input switching strategy reduce kickback-induced error?
+
+(f) Write MATLAB (or pseudocode) for a behavioral comparator model including:
+    - offset Vos,
+    - input-referred noise,
+    - finite regeneration time,
+    - metastability timeout flag.
+Show how this model plugs into SAR bit-cycle simulation.
+
+----------------------------------------------------------------------
+Question 4 - Cap-DAC Charge Redistribution and SAR Bit Cycling
+----------------------------------------------------------------------
+
+Consider a single-ended 6-bit SAR using a binary-weighted Cap-DAC with bottom-plate switching.
+Assume ideal comparator first, then include non-idealities.
+
+(a) Using charge conservation, derive the top-plate voltage update equation after:
+    (i) sample-to-hold transition,
+    (ii) MSB trial switch,
+    (iii) generic k-th bit trial.
+Clearly define capacitance normalization and reference polarity.
+
+(b) For Vin = 0.37*VREF and VCM = 0.5*VREF, manually trace all 6 bit decisions.
+Show residue voltage after each bit and final digital output code.
+
+(c) Introduce capacitor mismatch:
+    Ci = Ci,ideal*(1 + epsilon_i)
+Derive first-order effect on DAC transfer linearity and explain resulting DNL/INL and spur behavior.
+
+(d) Explain how incomplete DAC settling and reference-buffer droop during fast bit cycling
+distort SAR decisions. Which bits are most sensitive and why?
+
+(e) Write MATLAB code (or detailed pseudocode) to simulate:
+    - ideal Cap-DAC SAR conversion,
+    - mismatch + settling + comparator offset.
+Report histogram/code-density and FFT-based dynamic impact.
+
+(f) Propose one low-power switching method (e.g., monotonic/common-mode based) and compare
+it against conventional switching in terms of:
+    - switching energy,
+    - common-mode movement,
+    - likely linearity side effects.
+

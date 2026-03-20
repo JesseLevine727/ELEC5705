@@ -1,0 +1,38 @@
+Here are 5 in-depth questions (4 standard + 1 bonus) drawing directly from your course materials. These are designed to push your understanding of the mathematical derivations, physical circuit mechanisms, and architectural trade-offs.
+
+### **Question 1: Fundamentals of ADCs (SNDR, SFDR, and Quantization Noise)**
+Consider a 10-bit ideal Nyquist-rate ADC with a full-scale voltage range of $V_{FS} = 1\text{ V}$, sampling at $f_S = 100\text{ MHz}$. 
+**(a)** Calculate the analog LSB size ($\Delta$) and the theoretical quantization noise power ($\sigma_\epsilon^2$). 
+**(b)** Assuming the quantization noise is white, what is the Power Spectral Density (PSD) of the quantization noise? (Express your answer in terms of $\text{V}^2/\text{Hz}$).
+**(c)** You test a physical prototype of this ADC in the lab using a full-scale sine wave. The output spectrum analyzer reads the fundamental signal power as $0\text{ dBFS}$ (dB relative to full scale). You observe a 3rd harmonic spur at $-65\text{ dBFS}$, a 5th harmonic spur at $-72\text{ dBFS}$, and the integrated electronic noise floor (excluding the harmonics) measures $-62\text{ dBFS}$. 
+Calculate the **SFDR**, the **SNDR (SINAD)**, and the true **ENOB** of this physical ADC. *(Hint: Convert dBFS values to linear power ratios to sum the distortion and noise, then convert back to dB).*
+
+### **Question 2: Comparator (StrongArm Latch & Nonidealities)**
+The StrongArm latch is a heavily utilized clocked comparator in modern ADCs. 
+**(a)** Identify and briefly describe the physical state of the internal nodes ($P, Q, X, Y$) during the **three distinct modes** of operation: Precharge, Amplification (Integration), and Regeneration. 
+**(b)** During the Amplification mode, the tail transistor turns on and draws current $I_{SS}$, discharging the parasitic capacitances $C_P$ and $C_Q$ at nodes $P$ and $Q$. The differential pair integrates the input difference $\Delta V_{in} = V_{in1} - V_{in2}$ until the voltages drop by exactly $V_{THN}$ (which turns on the cross-coupled PMOS devices). Based on your slides, write the expression for the time $t_1$ this takes, and the resulting initial voltage difference $|V_P - V_Q|$ generated at this exact moment. 
+**(c)** When used in a flash ADC, the StrongArm latch creates severe **kickback noise**. Explain the two distinct mechanisms by which the StrongArm latch kicks charge back into the input signal nodes (via $C_{GS}$ and $C_{GD}$). Why is this a massive problem for the reference resistor ladder in a Flash ADC?
+
+### **Question 3: Cap-DAC + SAR ADC (Bottom-Plate Sampling)**
+Consider a 3-bit single-ended SAR ADC that employs bottom-plate sampling to avoid input-dependent charge injection. The binary-weighted capacitor array consists of $4C$, $2C$, $1C$, and a dummy $1C$. The reference voltage is $V_{REF} = 8\text{ V}$. 
+**(a)** During the sampling phase, the top plate (common node $V_X$) is tied to $V_{CM} = 0\text{ V}$ (ground), and all bottom plates are tied to the analog input $V_{in} = 5.2\text{ V}$. Write the expression for the total trapped charge $Q_{total}$ on the top plate.
+**(b)** The circuit enters the hold phase: the top plate switch is opened (node $V_X$ floats), and the bottom plates of all capacitors are switched to ground. Calculate the new voltage at the top plate, $V_X$.
+**(c)** **MSB Trial:** To test the MSB, the bottom plate of the $4C$ capacitor is switched to $V_{REF}$. Using the principle of charge conservation ($Q_{before} = Q_{after}$), calculate the new top plate voltage $V_X$. If the comparator outputs a logical "1" when $V_X < 0\text{ V}$, what is the MSB decision, and what do we do with the $4C$ bottom plate?
+**(d)** **LSB Trials:** Trace the remaining 2 bits of the binary search. For each bit, state the updated $V_X$ value, the comparator decision, and whether the bit is kept or cleared. What is the final 3-bit digital code?
+
+### **Question 4: 1st-Order Delta-Sigma Modulators & Feedback Stability**
+A continuous-time 1st-order $\Delta\Sigma$ modulator operates as a dynamic negative feedback loop to shape quantization noise. The loop consists of an analog integrator $H(s) = \frac{K}{s}$ in the forward path, a 1-bit quantizer (modeled as an additive noise source $Q$), and a feedback DAC.
+**(a)** Using standard block-diagram algebra, derive the **Signal Transfer Function (STF)** $= \frac{Y(s)}{X(s)}$ and the **Noise Transfer Function (NTF)** $= \frac{Y(s)}{Q(s)}$.
+**(b)** Evaluate the NTF at very low frequencies ($s \to 0$) and at very high frequencies ($s \to \infty$). Mathematically explain why this specific behavior achieves "noise shaping".
+**(c)** **The Feedback Connection:** The performance of oversampled ADCs is highly sensitive to the stability of the feedback amplifiers used inside them (like the integrator op-amp or the reference buffers). Suppose an internal amplifier has a feedback loop with a very poor phase margin (e.g., $10^\circ$). According to your slides on feedback systems, what happens to the magnitude of the denominator $1 + A(s)\beta$ near the unity-gain crossover frequency, and what physical effect does this have on the Noise Transfer Function spectrum? *(Hint: Can we avoid the peaking?)*
+
+### **Bonus Question: Sub-Ranging ADC (With and Without Redundancy)**
+You are designing a sub-ranging ADC with a full-scale range of $64\text{ V}$ (where $1\text{ LSB} = 1\text{ V}$). 
+*   **Scenario A (Without Redundancy):** You use a 3-bit coarse Flash ADC (which dictates steps of $8\text{ V}$) and a 3-bit fine Flash ADC. Assume the input is exactly **$V_{in} = 22\text{ V}$**. Ideally, the coarse ADC outputs a `010` (decimal 2, accounting for $16\text{ V}$), leaving a $6\text{ V}$ residue for the fine ADC. 
+    However, due to noise, the coarse ADC makes a **-1 LSB error**, outputting a `001` (decimal 1, accounting for $8\text{ V}$). What is the new analog residue? Explain exactly why the 3-bit fine ADC will fail to digitize this new residue, ruining the conversion.
+*   **Scenario B (With Redundancy):** To fix this, you upgrade to a **4-bit coarse ADC** and a **3-bit fine ADC** (nominally 6-bit resolution, so 1 bit overlaps, meaning 1 Coarse LSB = 4 Fine LSBs). The input is again **$V_{in} = 22\text{ V}$**. Ideally, the coarse ADC should output a 5 (accounting for $20\text{ V}$). 
+    Due to noise, the coarse ADC makes a **-1 LSB error**, outputting a **4**. Calculate the new analog residue left over, determine the decimal output of the fine ADC, and show the bit-aligned binary addition that mathematically corrects the error and recovers the exact correct code for 22.
+
+***
+
+Take your time working through the math and block diagrams. Whenever you are ready, just let me know and I will provide the step-by-step solutions!
