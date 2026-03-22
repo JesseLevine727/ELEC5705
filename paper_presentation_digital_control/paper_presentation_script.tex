@@ -1,0 +1,215 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{xcolor}
+
+\setlist[itemize]{leftmargin=1.4em}
+\setlist[description]{leftmargin=1.6em,style=nextline,font=\normalfont\bfseries}
+
+\newcommand{\speak}[1]{\textbf{Say:} #1}
+\newcommand{\ifasked}[1]{\textbf{If asked:} #1}
+\newcommand{\course}[1]{\textbf{Course link:} #1}
+
+\title{Speaker Notes\\
+A 46 $\mu$W 13 b 6.4 MS/s SAR ADC With Background Mismatch and Offset Calibration}
+\author{Jesse Levine}
+\date{ELEC5705}
+
+\begin{document}
+\maketitle
+
+\section*{How To Use This Script}
+This version is written as speaking notes, not as a report. Read the \textbf{Say:} lines out loud. Use the \textbf{If asked:} lines only if someone interrupts or asks for clarification. The \textbf{Course link:} lines are there to help connect the paper back to class material.
+
+\section*{Title Slide}
+\speak{Today I am presenting a 2017 IEEE JSSC paper on a 46 microwatt, 13-bit, 6.4 mega-sample-per-second SAR ADC with background calibration for DAC mismatch and comparator offset.}
+
+\speak{I am going to cover the whole paper briefly, but I will spend most of the time on the control and calibration logic, because that is the part most relevant to my project.}
+
+\ifasked{Why this paper? Because it solves a real high-resolution SAR problem using very lightweight digital control, which maps well to HLS or FPGA-style implementation.}
+
+\section*{Slide 2: Introduction --- Motivation and Challenges}
+\speak{The paper starts from a very practical problem. Wireless standards, such as IEEE 802.15.4g, need ADCs with reasonably high resolution and MS-per-second sampling rates, but they also need to be extremely low power.}
+
+\speak{And in a radio receiver, the ADC is not operating in a clean environment. It may see a weak desired signal in the presence of larger blockers or interference. So the converter needs both dynamic range and energy efficiency.}
+
+\speak{This is exactly why SAR ADCs are attractive. As we have seen in class, SAR converters are known for excellent power efficiency because they mostly rely on charge redistribution, a comparator, and simple control logic, instead of power-hungry op-amps in every cycle.}
+
+\speak{The issue is that once you try to push a SAR ADC beyond about 10 bits, a few nonidealities start to dominate. The first is DAC capacitor mismatch. The authors claim that in modern CMOS, the intrinsic matching of the capacitive DAC is effectively limited to about 10 to 12 bits.}
+
+\speak{In principle, you can improve matching by scaling the capacitors up. But that immediately hurts the thing SAR ADCs are best at, namely energy efficiency. Larger capacitors mean more switching energy, larger area, and often slower settling.}
+
+\speak{The second problem is noise and comparator offset. As the LSB gets smaller, the error budget gets tighter, so comparator noise and offset matter much more. This becomes even worse at low supply voltage, which the paper treats as roughly one volt or below.}
+
+\course{This is the same tradeoff we keep seeing in the course: at higher resolution, parasitics, mismatch, and noise stop being second-order details and start setting the architecture.}
+
+\ifasked{Why do larger capacitors reduce power efficiency? Because DAC switching energy scales with capacitance, roughly as $CV^2$, so improving matching by brute force costs switching power every conversion.}
+
+\section*{Slide 3: Introduction --- Prior Fixes and This Paper's Solution}
+\speak{The paper then reviews what others have tried. One class of prior work uses digital calibration, for example DSP or LMS-style adaptation, to correct ADC errors in the background.}
+
+\speak{The problem there is not that the method is wrong. The problem is overhead. Once you start estimating coefficients digitally, you need arithmetic, storage, and constant updates. That means extra area and extra power.}
+
+\speak{Other approaches use statistics-based methods to estimate capacitor mismatch. Those also work, but they generally need many samples or calibration time, so they cost latency, and usually power and area as well.}
+
+\speak{The paper also points out that noise is another limiting factor. One prior solution is a two-stage pipelined SAR with an amplifier between stages. That can reduce the comparator noise requirement, but now you have inserted an analog amplifier whose gain, noise, settling, offset, and linearity all matter. So you solve one problem and create another.}
+
+\speak{Another option is oversampling the comparator. That can improve reliability, but it takes more comparison cycles per conversion. So for a fixed internal clock, the effective sample rate drops.}
+
+\speak{So the authors propose a different idea: keep the SAR architecture, keep it asynchronous and power-efficient, but add low-power on-chip background calibration for the two dominant error mechanisms, which are DAC mismatch and dynamic comparator offset.}
+
+\speak{The design they propose is a 13-bit SAR ADC with a reconfigurable comparator and a background calibration loop that only detects the sign of the error, not the full magnitude.}
+
+\course{This is a good place to connect to behavioral synthesis. The paper avoids a heavy estimation engine and instead uses a sign-based controller, which is much more natural to express as a small FSM plus counters.}
+
+\ifasked{Why is DSP calibration expensive here? Because it is active all the time and often needs multiply-accumulate style updates, whereas this paper only needs occasional sign decisions and counter updates.}
+
+\section*{Slide 4: Section II --- Design Philosophy}
+\speak{The main philosophy of the paper is very simple: do not compute more than you need.}
+
+\speak{First, they prefer background calibration over foreground calibration. Background calibration means the ADC can keep running normally while the correction loop slowly adapts in the background. That is useful for drift and environmental variation.}
+
+\speak{Second, and more importantly, they prefer direct sign detection over indirect estimation. In many other methods, you observe the final ADC output, define some cost function, and then adapt coefficients until the cost goes down.}
+
+\speak{Here they avoid that. They ask a much simpler question: should the correction move up or down?}
+
+\speak{That is why I like to describe the paper as a hardware-efficient sign-gradient system. It is not literally machine learning, but the intuition is similar to gradient descent: observe the direction that reduces the error, take a small step in that direction, and repeat.}
+
+\speak{The reason that matters is implementation cost. If I only need the sign, I can build the controller out of detectors, counters, and registers. I do not need multipliers or full-blown adaptive DSP.}
+
+\course{This is very close to what we discuss in data converters and in synthesis: architectural insight can replace computation. The paper turns an analog calibration problem into a sign-only control problem.}
+
+\ifasked{Why is sign enough? Because they use a feedback loop. If each step moves the correction in the right direction, repeated small steps drive the error toward zero without explicitly estimating its exact value.}
+
+\section*{Slide 5: Section II --- ADC Architecture}
+\speak{At the architecture level, the ADC is still recognizably a SAR converter. The differential input is sampled onto a capacitive DAC, and then the comparator and SAR logic resolve the code through successive approximation using monotonic switching.}
+
+\speak{What is new is the redundancy. Although the output is 13 bits, the internal conversion uses 15 comparison cycles. Two of those cycles are redundant.}
+
+\speak{The first redundant cycle is around the seventh comparison. That extra margin helps DAC settling and also supports DAC mismatch calibration. The second redundant cycle is around the eleventh comparison. That one helps tolerate comparator noise and comparator offset.}
+
+\speak{The paper notes that the redundancy at that later stage can absorb about plus or minus 8 LSB of error. That becomes important later when they discuss residual comparator offset after calibration.}
+
+\speak{Because of the redundancy, the ADC first produces a 15-bit raw code, and then an on-chip digital adder maps that raw code to the final 13-bit output. So the final answer is still a 13-bit output code, but the converter gives itself extra internal freedom during the search.}
+
+\speak{The design also has an optional sixteenth cycle. Normally, conversions stop after 15 comparisons. But when a useful calibration condition is detected, the control logic inserts a sixteenth comparison to probe either DAC mismatch or comparator offset.}
+
+\speak{Another important point is that the converter is asynchronous. So instead of a fast global clock forcing every internal bit cycle, each step completes when the analog operation is ready. That reduces clocking overhead and helps keep power down.}
+
+\course{This lines up with what we learned about SAR timing: the basic loop is still sample, compare, update DAC, repeat. The novelty here is that redundancy and an optional extra cycle are used to turn the SAR search itself into a calibration sensor.}
+
+\ifasked{Why 15 cycles for a 13-bit ADC? Because two cycles are not used for extra output bits. They are redundant decisions that add error tolerance and make the calibration mechanism observable.}
+
+\section*{Slide 6: Section II --- Sign-Based Calibration Loops}
+\speak{This is the core idea of the paper, so I would spend time here. There are two calibration loops: one for comparator dynamic offset and one for DAC mismatch. Both use the same pattern: create two conditions that should ideally be equivalent, compare them, and use the sign of the difference.}
+
+\speak{Start with comparator offset. The comparator has two modes. Early coarse comparisons use a low-power, noisier mode. Later fine comparisons use a higher-power, lower-noise mode. That saves energy overall, but the two modes have different offsets.}
+
+\speak{The paper defines the quantity being corrected as $V_{\delta}=V_{\text{off1}}-V_{\text{off2}}$, meaning the offset difference between the two comparator modes.}
+
+\speak{To detect that offset, the ADC repeats the final comparison in an optional sixteenth cycle. The DAC code is kept the same as in cycle 15, so ideally the analog condition at the comparator input is unchanged. The only thing that changes is the comparator mode: it switches from fine mode back to coarse mode.}
+
+\speak{Now the digital logic compares the two decisions, $D_{15}$ and $D_{16}$. If they differ, that means the mode change introduced a different effective threshold, so there is a residual dynamic offset. More importantly, the comparison tells the controller the sign of that offset error.}
+
+\speak{Once the sign is known, the digital feedback loop starts acting on it. The sign is fed into a digital low-pass filter, which is basically a voting mechanism. After enough repeated votes in the same direction, the calibration register updates, and that register controls the comparator correction capacitor arrays, $C_a$ and $C_b$. Those arrays induce a tiny differential input step that cancels the offset difference between the two modes.}
+
+\speak{Now the DAC mismatch loop. This one uses the redundant raw coding. Because the ADC has 15 raw bits for a final 13-bit result, different internal DAC codes can correspond to the same final output code.}
+
+\speak{Ideally, if two raw codes represent the same final output, they should also generate the same DAC voltage. But if one of the capacitors is mismatched, then those two internal code combinations no longer produce the same analog value.}
+
+\speak{The paper gives the MSB example pair 1000000x and 0111111x. Those are two different internal DAC states that should represent the same final output. So if one of them appears during a normal conversion, the controller enables the sixteenth cycle and forces the DAC to the alternate code.}
+
+\speak{Then it compares the result from cycle 15 under code A and cycle 16 under code B. If the decision changes, the controller learns whether the analog value of code A is larger or smaller than code B. That reveals the sign of the DAC mismatch for that bit transition.}
+
+\speak{Again, the controller does not estimate the exact capacitor error. It only learns which way to move the correction. Then the feedback loop updates the DAC calibration network using tiny correction capacitors.}
+
+\speak{The paper also mentions an important detail: even though all five upper DAC capacitors are calibrated in the background, they do not settle simultaneously. Lower-bit corrections tend to settle first, and then the higher bits settle afterward, because upper-bit transitions are still influenced by lower-bit mismatch until those lower bits are corrected.}
+
+\course{This is where the paper really departs from the textbook SAR. In class, we usually treat the SAR decisions as the end goal. Here, the authors reuse the SAR decision process itself as a built-in error measurement mechanism.}
+
+\ifasked{Why not estimate the exact mismatch value? Because sign-only detection is enough for a stepwise feedback loop, and it is much cheaper in power and logic than full estimation.}
+
+\ifasked{Why does redundancy matter so much? Because without redundancy, you would not have these alternate internal code representations that should ideally be equivalent. Redundancy is what makes the mismatch observable.}
+
+\section*{Slide 7: Section III --- Low-Power Calibration Logic}
+\speak{Section III is where the paper turns that idea into real implementation. This is the digital heart of the chip.}
+
+\speak{The first key block is Sense and Force. It continuously watches the internal raw DAC code during conversion and decides whether a calibration event should be triggered.}
+
+\speak{The paper partitions the 15-bit raw code into a 7-bit X-code, a 3-bit Y-code, and a 5-bit Z-code. For DAC mismatch calibration, the X-code identifies which capacitor transition is relevant. For comparator calibration, they use an X-code of 11000xx.}
+
+\speak{If a trigger pattern appears during the 15 normal comparisons, Sense and Force enables the sixteenth cycle. For DAC calibration, it uses a multiplexer to force the DAC from one redundant code to the alternate one. For comparator calibration, it commands the comparator to switch from mode 2 back to mode 1 during that extra cycle.}
+
+\speak{Now, if you implement that detector naively in static CMOS, it burns power continuously, because internal gates switch whenever the raw code changes, even if the current code is useless for calibration. The authors avoid that with dynamic logic.}
+
+\speak{In their implementation, each detection slice is reset at the start of a conversion. The internal node only charges if the exact desired code pattern appears. So most of the time the detector does not switch meaningfully.}
+
+\speak{The paper implements eleven slices in total: ten for the five DAC calibration code pairs, and one for comparator calibration. And only 14 out of the 128 possible X-codes can actually activate them. So the detector is inactive roughly 90 percent of the time.}
+
+\speak{The next power-saving trick is reducing how often calibration is even attempted. Without restricting the code patterns much, the total activation rate would be about 10.9 percent. The authors then also require the Y-code to be 110, which drops the activation rate to about 1.4 percent.}
+
+\speak{They also place the trigger codes near the middle of the code range so the loop still gets calibration opportunities even when the input is not near full scale.}
+
+\speak{After the sign of the error is detected, the signal goes into the digital low-pass filter, or LPF. The paper implements six LPFs total: five for DAC calibration and one for comparator calibration.}
+
+\speak{Each LPF is a 6-bit bidirectional counter. This is important, because it tells you how lightweight the controller really is. Each unit cell is just one D flip-flop and three logic gates.}
+
+\speak{The counter receives either an increment request or a decrement request, corresponding to the sign of the detected error. If the same sign keeps appearing, the counter walks toward one extreme. If noise causes an occasional sign flip, the counter just steps back a little.}
+
+\speak{Only when the counter reaches 63 or 0 does it generate a short output pulse. That pulse updates the calibration register. So the LPF is really acting as a digital vote accumulator that rejects random noisy decisions.}
+
+\speak{Another nice detail is that when calibration is not active, both LPF inputs are low. In that case the counter simply holds its state and stops switching. So even the filter is event-driven and low power.}
+
+\course{From a course and project point of view, this is the part that maps most cleanly into digital hardware. If I had to implement the paper in HLS, this slide is basically my specification: trigger detector, 16th-cycle control, sign logic, six up/down counters, and calibration registers.}
+
+\ifasked{Why dynamic logic here? Because this block is always watching the raw code, so reducing unnecessary switching gives a real power win.}
+
+\ifasked{Why is the LPF needed? Because a single $D_{15}$ and $D_{16}$ comparison can be corrupted by random comparator noise. Without filtering, the calibration word would jitter.}
+
+\section*{Slide 8: Section III --- Analog Correction Hardware and Measured Impact}
+\speak{This is really the wonder of the design: the digital logic does not correct the ADC output afterward. It only decides \emph{when} to update and in \emph{which direction}. The actual fix is done in analog hardware.}
+
+\speak{For DAC mismatch, the fix is to switch tiny 75 attofarad trim capacitors in or out next to the main DAC capacitors. So if a DAC bit is too small, the register adds capacitance. If it is too large, the register removes capacitance. That directly changes the physical DAC bit weight.}
+
+\speak{For comparator offset, the fix is to switch the capacitor arrays $C_a$ and $C_b$ so they create a small differential input step equal to $(C_a-C_b)/C_s \cdot V_{DD}$. That step is chosen to cancel the offset jump between coarse mode and fine mode.}
+
+\speak{So the digital loop only provides the control word. The correction itself is physical: change the DAC capacitance, or inject a compensating voltage step at the comparator input.}
+
+\speak{The nice part is how small the overhead is. The digital calibration area is only 0.0017 square millimeters, and the analog correction area is about 0.0009 square millimeters. The calibration power overhead is about 5 percent.}
+
+\speak{So the overall implementation strategy is very disciplined: keep the main DAC small, keep the correction elements tiny, keep the digital controller sparse and event-driven, and let the feedback loop slowly trim out the analog errors.}
+
+\course{This is a good example of a mixed-signal co-design philosophy. They are not solving everything digitally or everything analog. They let simple digital control tune small analog correction elements.}
+
+\ifasked{Why use physical analog correction instead of digital post-processing? Because DAC mismatch and comparator offset distort the conversion process itself. Correcting the hardware directly improves linearity and spurs at the source.}
+
+\ifasked{Why are the 75 aF calibration caps acceptable even if tiny capacitors do not match perfectly? Because the feedback loop is incremental, the switched calibration capacitance is small, and the correction elements themselves do not need the same absolute precision as the main DAC.}
+
+\section*{Slide 9: Measurements Summary}
+\speak{Finally, the measurements show that the concept works in silicon, not just in simulation.}
+
+\speak{The ADC is fabricated in 40-nanometer CMOS, runs from a 1-volt supply, and occupies 0.0675 square millimeters. With calibration enabled, it consumes 46 microwatts at 6.4 mega-samples per second.}
+
+\speak{Although the converter is nominally 13 bits, the measured ENOB is 10.4 bits. The measured SNDR is 64.1 dB and the SFDR is 81.9 dB. The figure of merit is 5.5 femtojoules per conversion step, which is the headline efficiency result.}
+
+\speak{The paper also reports about 20 dB spur reduction with calibration. That is a strong indication that the mismatch and offset errors are being corrected in a meaningful way.}
+
+\speak{The convergence time is about 400 thousand cycles. At 6.4 MS/s, that is on the order of a few times $10^{-2}$ seconds, so the loop is definitely slow relative to one conversion, but that is completely acceptable for background calibration.}
+
+\speak{So the final message I would leave here is that the paper gets 13-bit-class SAR behavior using a very small, very disciplined calibration engine instead of a heavy DSP backend.}
+
+\course{If I am asked what part of this paper is most relevant to my project, the answer is the digital controller around the calibration loop, not the analog transistor-level implementation of the ADC itself.}
+
+\ifasked{Why is ENOB lower than 13 bits if this is called a 13-bit ADC? Because 13 bits is the nominal resolution of the architecture. ENOB reflects the real effective resolution after noise and distortion.}
+
+\section*{Closing Line}
+\speak{So the paper's real contribution is not just building a low-power SAR ADC. It is showing that redundancy can be used to create sign-only error detectors, and that those detectors can drive a very low-overhead mixed-signal calibration loop.}
+
+\speak{For my project, the natural extraction is the digital side of that loop: trigger detection, 16th-cycle control, sign extraction from $D_{15}$ and $D_{16}$, the LPF counters, and the calibration registers.}
+
+\end{document}

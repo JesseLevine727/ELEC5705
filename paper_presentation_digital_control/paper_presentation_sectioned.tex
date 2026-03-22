@@ -1,0 +1,333 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{frametitle}{
+  \vspace{0.4em}
+  \insertframetitle\par
+  \vspace{0.3em}
+  \hrule
+}
+
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{frametitle}{fg=black,bg=white}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{subtitle}{fg=black}
+
+\title{A 46 $\mu$W 13 b 6.4 MS/s SAR ADC\\with Background Mismatch and Offset Calibration}
+\subtitle{Pieter Harpe et al.\\IEEE JSSC, 2017}
+\author{Jesse Levine}
+\date{}
+
+\definecolor{linegray}{RGB}{120,120,120}
+\definecolor{softgray}{RGB}{245,245,245}
+\definecolor{softblue}{RGB}{233,242,252}
+\definecolor{softgreen}{RGB}{235,248,238}
+\definecolor{softred}{RGB}{252,239,239}
+
+\tikzset{
+  box/.style={
+    draw=linegray,
+    rounded corners=1.5mm,
+    thick,
+    align=center,
+    fill=softgray,
+    inner sep=5pt,
+    font=\small
+  },
+  flow/.style={-Latex, thick, draw=black}
+}
+
+\begin{document}
+
+\begin{frame}
+  \begin{columns}[T]
+    \begin{column}{0.56\textwidth}
+      \vspace{1.1cm}
+      \centering
+      {\LARGE \inserttitle \par}
+      \vspace{0.45cm}
+      {\large \insertsubtitle \par}
+      \vspace{1.0cm}
+      {\large ELEC5705 \par}
+      \vspace{0.25cm}
+      {\large \insertauthor \par}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{Figures/Paper_title.png}
+
+      \vspace{2mm}
+
+      \includegraphics[width=\linewidth]{Figures/Paper_abstract.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Introduction: Motivation and Challenges}
+  \begin{columns}[T]
+    \begin{column}{0.58\textwidth}
+      \small
+      \textbf{Context}
+      \begin{itemize}
+        \item Wireless standards such as \textbf{IEEE 802.15.4g} need \textbf{high-resolution} ADCs at MS/s rates with \textbf{very low power}.
+        \item SAR ADCs are attractive because they already offer excellent \textbf{energy efficiency}.
+      \end{itemize}
+
+      \textbf{Main problems above 10 bits}
+      \begin{itemize}
+        \item \textbf{DAC mismatch}: intrinsic capacitor matching in modern CMOS is practically limited to about \textbf{10--12 bits}.
+        \item \textbf{Noise and comparator offset}: these begin to limit usable resolution.
+        \item Larger capacitors help matching, but increase \textbf{power} and \textbf{area}, and can reduce \textbf{speed}.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \centering
+      \begin{tikzpicture}[node distance=5mm, scale=0.88, transform shape]
+        \node[box, fill=softblue, minimum width=3.6cm, minimum height=0.95cm] (std) {Wireless standards\\high resolution + low power};
+        \node[box, below=of std, minimum width=3.6cm, minimum height=0.95cm] (sar) {SAR ADC\\high efficiency};
+        \node[box, fill=softred, below=of sar, minimum width=3.6cm, minimum height=0.95cm] (dac) {DAC mismatch\\10--12 b limit};
+        \node[box, fill=softred, below=of dac, minimum width=3.6cm, minimum height=0.95cm] (noise) {Noise + comparator offset};
+        \node[box, fill=softgreen, below=of noise, minimum width=3.6cm, minimum height=0.95cm] (challenge) {Keep accuracy\\without losing efficiency};
+        \draw[flow] (std) -- (sar);
+        \draw[flow] (sar) -- (dac);
+        \draw[flow] (dac) -- (noise);
+        \draw[flow] (noise) -- (challenge);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Introduction: Prior Fixes and This Paper's Solution}
+  \begin{columns}[T]
+    \begin{column}{0.60\textwidth}
+      \small
+      \textbf{Why prior fixes are costly}
+      \begin{itemize}
+        \item \textbf{DSP / LMS} and \textbf{statistics-based calibration} add digital processing, sample collection, or foreground time $\rightarrow$ more \textbf{area}, \textbf{power}, and \textbf{latency}.
+        \item \textbf{Two-stage pipelined SAR + amplifier} can relax comparator noise, but the amplifier is hard to design and introduces new analog errors.
+        \item \textbf{Comparator oversampling} improves reliability, but extra comparisons reduce \textbf{speed}.
+      \end{itemize}
+
+      \textbf{This paper proposes}
+      \begin{itemize}
+        \item A \textbf{13-bit SAR ADC} with a \textbf{reconfigurable comparator}.
+        \item \textbf{Low-power on-chip background calibration} for \textbf{DAC mismatch} and \textbf{dynamic comparator offset}.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.40\textwidth}
+      \centering
+      \small
+      \begin{tabular}{|l|c|}
+        \hline
+        \multicolumn{2}{|c|}{\textbf{Reported design summary}} \\
+        \hline
+        Resolution & 13 b \\
+        \hline
+        Sampling rate & 6.4 MS/s \\
+        \hline
+        Power & 46 $\mu$W \\
+        \hline
+        SNDR & 64.1 dB\\
+        \hline
+        ENOB & 10.4 b \\
+        \hline
+        FoM & 5.5 fJ/conv-step \\
+        \hline
+      \end{tabular}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Section II: Design Philosophy}
+  \begin{columns}[T]
+    \begin{column}{0.58\textwidth}
+      \small
+      \begin{itemize}
+        \item \textbf{Background} calibration can keep running during normal ADC operation; foreground methods usually need special conditions.
+        \item Prior work often detects errors \textbf{indirectly}: analyze final ADC output and adapt coefficients with DSP/LMS-like logic.
+        \item This paper detects errors \textbf{directly}: determine only the \textbf{sign} of the error, then step correction in the opposite direction.
+        \item Intuition: a \textbf{hardware-efficient sign-gradient update} with much less arithmetic.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \centering
+      \begin{tikzpicture}[node distance=6mm]
+        \node[box, fill=softred, minimum width=3.8cm] (ind1) {Indirect method\\observe final ADC output};
+        \node[box, fill=softred, below=of ind1, minimum width=3.8cm] (ind2) {Define cost function\\run LMS / DSP update};
+        \node[box, fill=softblue, below=11mm of ind2, minimum width=3.8cm] (dir1) {Direct method\\detect sign only};
+        \node[box, fill=softgreen, below=of dir1, minimum width=3.8cm] (dir2) {Step correction\\up or down};
+        \draw[flow] (ind1) -- (ind2);
+        \draw[flow] (dir1) -- (dir2);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Section II: ADC Architecture (Fig. 2)}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \small
+      \begin{itemize}
+        \item The S\&H samples the \textbf{differential input} on the capacitive DAC array.
+        \item Comparator + SAR logic + \textbf{monotonic switching} perform the successive-approximation search.
+        \item The ADC uses \textbf{15 cycles} for a \textbf{13-bit} conversion, with \textbf{2 redundant cycles}.
+        \item The \textbf{7th} redundant cycle helps DAC settling / mismatch calibration; the \textbf{11th} helps tolerate comparator noise / offset.
+        \item A digital adder maps the \textbf{15-bit raw code} to the final \textbf{13-bit output}; an optional \textbf{16th cycle} is used for calibration.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{Figures/Figure2.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Section II: Sign-Based Calibration Loops}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      \small
+      \textbf{Comparator offset detection}
+      \begin{itemize}
+        \item Add the \textbf{16th cycle}; keep the DAC code the same as in cycle 15.
+        \item Switch the comparator from fine mode back to coarse mode.
+        \item Compare \(D_{15}\) and \(D_{16}\) to get the \textbf{sign} of the offset error.
+      \end{itemize}
+
+      \textbf{DAC mismatch detection}
+      \begin{itemize}
+        \item Redundancy means two different internal DAC codes can represent the same final output.
+        \item If code \(A\) is observed, the controller enables the 16th cycle and forces the alternate code \(B\).
+        \item Comparing cycle 15 under \(A\) and cycle 16 under \(B\) reveals the \textbf{sign} of the mismatch.
+      \end{itemize}
+
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{Figures/Figure10.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Section III: Low-Power Calibration Logic}
+  \begin{columns}[T]
+    \begin{column}{0.58\textwidth}
+      \small
+      \textbf{How they made the controller cheap}
+      \begin{itemize}
+        \item \textbf{Dynamic Sense\&Force}: code-detection logic mostly stays reset/inactive unless a calibration trigger appears.
+        \item \textbf{Low activation rate}: specific \(X\)- and \(Y\)-code patterns reduce calibration activity to about \textbf{1.4\%} of conversions.
+        \item \textbf{Digital LPF}: six \textbf{6-bit bidirectional counters} are used, one comparator path and five DAC paths.
+        \item Counters move \textbf{up/down} based on the error sign and only update the calibration register at \((0, 63)\).
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \centering
+      \begin{tikzpicture}[node distance=6mm]
+        \node[box, fill=softblue, minimum width=3.8cm] (sense) {Sense\&Force\\dynamic code detection};
+        \node[box, fill=softgray, below=of sense, minimum width=3.8cm] (rate) {Trigger activity\\about 1.4\%};
+        \node[box, fill=softgreen, below=of rate, minimum width=3.8cm] (lpf) {6 $\times$ 6-bit\\bidirectional counters};
+        \node[box, fill=softred, below=of lpf, minimum width=3.8cm] (reg) {Update only at\\counter limits 0 / 63};
+        \draw[flow] (sense) -- (rate);
+        \draw[flow] (rate) -- (lpf);
+        \draw[flow] (lpf) -- (reg);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Section III: Analog Correction Hardware and Measured Impact}
+  \begin{columns}[T]
+    \begin{column}{0.56\textwidth}
+      \small
+      \textbf{Analog correction hardware}
+      \begin{itemize}
+        \item \textbf{DAC calibration}: custom \textbf{75 aF} capacitors provide \textbf{0.25 LSB} correction steps for the first five DAC capacitors.
+        \item \textbf{Comparator correction}: programmable capacitor banks \(C_a\) and \(C_b\) create a compensating input step.
+        \item Comparator correction range is up to \(\pm 63\) LSB with \textbf{1 LSB} steps.
+      \end{itemize}
+
+      \textbf{Takeaway}
+      \begin{itemize}
+        \item Tiny analog correction elements plus sparse digital control let the calibration overhead stay very small.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \centering
+      \small
+      \begin{tabular}{|l|c|}
+        \hline
+        \multicolumn{2}{|c|}{\textbf{Implementation summary}} \\
+        \hline
+        Process & 40 nm CMOS \\
+        \hline
+        Logic type & Dynamic logic \\
+        \hline
+        LPF & 6-bit bidirectional\\ counters \\
+        \hline
+        DAC step & 0.25 LSB \\
+        \hline
+        DAC trim cap & 75 aF \\
+        \hline
+        Comp. step & 1 LSB \\
+        \hline
+        Digital cal area & 0.0017 mm$^2$ \\
+        \hline
+      \end{tabular}
+
+      \vspace{4mm}
+
+      \begin{tikzpicture}[node distance=6mm]
+        \node[box, fill=softgreen, minimum width=3.8cm] (res) {Measured impact\\20 dB spur reduction\\64.1 dB SNDR\\400k-cycle settling};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Measurements Summary}
+  \centering
+  \small
+  \begin{tabular}{|l|c|}
+    \hline
+    \multicolumn{2}{|c|}{\textbf{Measured / Reported Results}} \\
+    \hline
+    Process & 40 nm CMOS \\
+    \hline
+    Supply voltage & 1 V \\
+    \hline
+    Active area & 0.0675 mm$^2$ \\
+    \hline
+    Digital calibration area & 0.0017 mm$^2$ \\
+    \hline
+    Analog correction area & 0.0009 mm$^2$ \\
+    \hline
+    Sampling rate & 6.4 MS/s \\
+    \hline
+    Resolution & 13 b \\
+    \hline
+    Total power & 46 $\mu$W \\
+    \hline
+    Calibration power overhead & $\sim$5\% \\
+    \hline
+    ENOB & 10.4 b \\
+    \hline
+    SNDR & 64.1 dB \\
+    \hline
+    SFDR & 81.9 dB \\
+    \hline
+    FoM & 5.5 fJ/conv-step \\
+    \hline
+    Spur reduction from calibration & $\sim$20 dB \\
+    \hline
+    Convergence time & $\sim$400k cycles \\
+    \hline
+  \end{tabular}
+\end{frame}
+
+\end{document}
