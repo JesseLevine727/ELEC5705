@@ -1,0 +1,4 @@
+Compare two equivalent states (A vs B)
+if mismatch --> error exists
+only detect sign of error (direction of error)
+apply feedback loop directly in analog via feedback correction (directly on capacitor or comparator)
