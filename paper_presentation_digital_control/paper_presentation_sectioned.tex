@@ -132,29 +132,14 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{Architecture and Closed-Loop Idea}
-  \small
-  \centering
-  \begin{tikzpicture}[node distance=2.2mm, scale=0.92, transform shape]
-    \node[box, fill=softgray, minimum width=2.35cm, minimum height=0.8cm] (n1) {Normal SAR\\conversion};
-    \node[box, fill=softblue, right=of n1, minimum width=2.35cm, minimum height=0.8cm] (n2) {Detect special\\codes};
-    \node[box, fill=softgray, right=of n2, minimum width=2.35cm, minimum height=0.8cm] (n3) {Compare two\\equivalent states};
-    \node[box, fill=softgreen, right=of n3, minimum width=2.35cm, minimum height=0.8cm] (n4) {Detect sign\\of error};
-    \node[box, fill=softred, right=of n4, minimum width=2.35cm, minimum height=0.8cm] (n5) {Adjust hardware\\and repeat};
-    \draw[flow] (n1) -- (n2);
-    \draw[flow] (n2) -- (n3);
-    \draw[flow] (n3) -- (n4);
-    \draw[flow] (n4) -- (n5);
-  \end{tikzpicture}
-
-  \vspace{3mm}
-
+\begin{frame}{Architecture}
   \begin{columns}[T]
     \begin{column}{0.46\textwidth}
-      \small
+      \scriptsize
       \begin{itemize}
         \item Standard differential SAR ADC with \textbf{monotonic switching}.
         \item Uses \textbf{15 comparison cycles} for a \textbf{13-bit} conversion.
+        \item Main DAC uses a very small \textbf{0.3 fF unit capacitor} to save power.
         \item Two \textbf{redundant cycles} make calibration observable and tolerate DAC settling / comparator error.
         \item An optional \textbf{16th cycle} is inserted only for calibration.
         \item Final output is computed from the \textbf{15-bit raw code}.
@@ -162,7 +147,9 @@
     \end{column}
     \begin{column}{0.54\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{Figures/Figure2.png}
+      \includegraphics[width=0.86\linewidth]{Figures/Figure2.png}
+
+      \includegraphics[width=0.72\linewidth]{Figures/Figure5_crop.png}
     \end{column}
   \end{columns}
 \end{frame}
@@ -194,7 +181,11 @@
     \end{column}
     \begin{column}{0.44\textwidth}
       \centering
-      \includegraphics[width=0.88\linewidth]{Figures/Figure10.png}
+      \includegraphics[width=0.86\linewidth]{Figures/Figure10.png}
+
+      \vspace{1mm}
+
+      \includegraphics[width=\linewidth]{Figures/Figure11_crop.png}
     \end{column}
   \end{columns}
 \end{frame}
@@ -222,53 +213,57 @@
     \end{column}
     \begin{column}{0.50\textwidth}
       \centering
-      \includegraphics[width=0.80\linewidth]{Figures/Figure13_crop.png}
-
-      \vspace{1mm}
-
-      \includegraphics[width=0.80\linewidth]{Figures/Figure14_crop.png}
+      \includegraphics[width=\linewidth]{Figures/Figure13a_crop.png}
     \end{column}
   \end{columns}
 \end{frame}
 
 \begin{frame}{Measurements Summary}
-  \centering
-  \small
-  \begin{tabular}{|l|c|}
-    \hline
-    \multicolumn{2}{|c|}{\textbf{Measured / Reported Results}} \\
-    \hline
-    Process & 40 nm CMOS \\
-    \hline
-    Supply voltage & 1 V \\
-    \hline
-    Active area & 0.0675 mm$^2$ \\
-    \hline
-    Digital calibration area & 0.0017 mm$^2$ \\
-    \hline
-    Analog correction area & 0.0009 mm$^2$ \\
-    \hline
-    Sampling rate & 6.4 MS/s \\
-    \hline
-    Resolution & 13 b \\
-    \hline
-    Total power & 46 $\mu$W \\
-    \hline
-    Calibration power overhead & $\sim$5\% \\
-    \hline
-    ENOB & 10.4 b \\
-    \hline
-    SNDR & 64.1 dB \\
-    \hline
-    SFDR & 81.9 dB \\
-    \hline
-    FoM & 5.5 fJ/conv-step \\
-    \hline
-    Spur reduction from calibration & $\sim$20 dB \\
-    \hline
-    Convergence time & $\sim$400k cycles \\
-    \hline
-  \end{tabular}
+  \begin{columns}[T]
+    \begin{column}{0.56\textwidth}
+      \centering
+      \scriptsize
+      \begin{tabular}{|l|c|}
+        \hline
+        \multicolumn{2}{|c|}{\textbf{Measured / Reported Results}} \\
+        \hline
+        Process & 40 nm CMOS \\
+        \hline
+        Supply voltage & 1 V \\
+        \hline
+        Active area & 0.0675 mm$^2$ \\
+        \hline
+        Digital calibration area & 0.0017 mm$^2$ \\
+        \hline
+        Analog correction area & 0.0009 mm$^2$ \\
+        \hline
+        Sampling rate & 6.4 MS/s \\
+        \hline
+        Resolution & 13 b \\
+        \hline
+        Total power & 46 $\mu$W \\
+        \hline
+        Calibration power overhead & $\sim$5\% \\
+        \hline
+        ENOB & 10.4 b \\
+        \hline
+        SNDR & 64.1 dB \\
+        \hline
+        SFDR & 81.9 dB \\
+        \hline
+        FoM & 5.5 fJ/conv-step \\
+        \hline
+        Spur reduction from calibration & $\sim$20 dB \\
+        \hline
+        Convergence time & $\sim$400k cycles \\
+        \hline
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{Figures/Figure22_crop.png}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \end{document}
