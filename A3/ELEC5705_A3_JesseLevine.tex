@@ -186,6 +186,13 @@ Cell type & Count \\
 
 This synthesis result is useful because it shows that the same successive-approximation controller can be represented not only behaviorally but also as a concrete gate-level digital circuit. However, it does not replace the analog verification flow. The comparator timing, DAC behavior, SNDR, and ENOB results still come from the behavioral mixed-signal abstractions described earlier.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{synthesis_experiment/sar_logic_synth_preview.png}
+\caption{Structural preview of the synthesized SAR controller graph derived from the Yosys gate-level netlist.}
+\label{fig:synthpreview}
+\end{figure}
+
 \section{Conclusion}
 A 5-bit asynchronous SAR controller was implemented and verified using two open-source behavioral simulation flows and one gate-level synthesis flow. The comparator behavior was derived from the StrongARM latch designed in Assignment 2, allowing the SAR logic to be evaluated with a realistic decision-time model. Both the Icarus Verilog and \texttt{ngspice} methods produced essentially the same result, showing correct bit-cycling, asynchronous next-bit timing, and near-ideal 5-bit dynamic performance. The additional Yosys synthesis confirmed that the controller can also be mapped to a conventional digital gate-level netlist. The final reported performance is approximately \SI{31.12}{dB} SNDR and 4.88 bits ENOB, with sub-\SI{0.6}{ns} total conversion time.
 
