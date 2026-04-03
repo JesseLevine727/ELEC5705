@@ -48,6 +48,14 @@ To inspect waveforms:
 gtkwave async_sar.vcd
 ```
 
+To generate report-ready PNG plots:
+
+```bash
+./.venv/bin/python generate_report_plots.py
+```
+
+This writes figures into `figures_report/`.
+
 **What The Testbench Models**
 
 - `start` pulse every `2 ns`, matching `500 MS/s`
