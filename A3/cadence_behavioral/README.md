@@ -33,3 +33,16 @@
 **Important Modeling Note**
 
 This is a behavioral async SAR loop. It is intended for Assignment 3 style logic verification, not for final transistor-level tapeout-quality timing validation.
+
+**Pure External-File Spectre Flow**
+
+If you want to avoid Cadence's text editor entirely, use [run_async_sar.scs](/home/elfo/Documents/ELEC5705/A3/cadence_behavioral/run_async_sar.scs).
+
+From a terminal:
+
+```bash
+cd /home/elfo/Documents/ELEC5705/A3/cadence_behavioral
+spectre run_async_sar.scs
+```
+
+This includes the three Verilog-A files directly from disk and runs a transient simulation without requiring a Cadence schematic or Verilog-A cellview.
