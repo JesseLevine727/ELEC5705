@@ -170,17 +170,17 @@ The synthesized netlist contains 79 cells in total. Table~\ref{tab:synth} summar
 \toprule
 Cell type & Count \\
 \midrule
-\texttt{\$\_DFFE\_PN0P\_} & 18 \\
-\texttt{\$\_DFFE\_PN1P\_} & 1 \\
-\texttt{\$\_DFF\_PN0\_} & 1 \\
-\texttt{\$\_AND\_} & 35 \\
-\texttt{\$\_OR\_} & 11 \\
-\texttt{\$\_NOT\_} & 7 \\
-\texttt{\$\_MUX\_} & 5 \\
-\texttt{\$\_XOR\_} & 1 \\
+Enabled DFF with active-low async reset & 18 \\
+Enabled DFF with active-high async reset & 1 \\
+DFF with active-low async reset & 1 \\
+AND gates & 35 \\
+OR gates & 11 \\
+NOT gates & 7 \\
+2:1 multiplexers & 5 \\
+XOR gates & 1 \\
 \bottomrule
 \end{tabular}
-\caption{Yosys synthesis result for the SAR controller gate-level netlist.}
+\caption{Yosys synthesis result for the SAR controller gate-level netlist, with primitive names rewritten in reader-friendly form.}
 \label{tab:synth}
 \end{table}
 
