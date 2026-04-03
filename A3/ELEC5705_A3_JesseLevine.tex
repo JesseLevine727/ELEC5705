@@ -128,12 +128,12 @@ This is close to ideal 5-bit behavior for the present behavioral model.
 \section{Cross-Check with ngspice}
 To compare simulation frameworks, the same assignment was also implemented in a separate \texttt{ngspice} behavioral experiment. This version uses the same sinusoidal stimulus, the same DAC transfer function, and the same StrongARM-based comparator timing model from Assignment 2. Instead of instantiating a SystemVerilog SAR controller, the successive-approximation loop is executed in the \texttt{ngspice} control language and exported as waveform and code data.
 
-The \texttt{ngspice} timing trace for the first conversion is shown in Fig.~\ref{fig:ngtiming}. The sequence of \texttt{start}, comparator-valid, trial code update, and end-of-conversion follows the same asynchronous logic behavior observed in the Icarus flow.
+Figure~\ref{fig:ngtiming} shows the \texttt{ngspice} timing trace over the same \SI{0}{ns} to \SI{6}{ns} multi-conversion window used for the Icarus waveform plot. The sequence of \texttt{start}, comparator-valid, trial code update, and end-of-conversion follows the same asynchronous logic behavior observed in the Icarus flow.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{ngspice_experiment/figures_report/waveform_timing.png}
-\caption{Behavioral asynchronous SAR timing reproduced in the \texttt{ngspice} experiment.}
+\caption{Behavioral asynchronous SAR timing reproduced in the \texttt{ngspice} experiment over the same \SI{0}{ns} to \SI{6}{ns} window used in the Icarus result.}
 \label{fig:ngtiming}
 \end{figure}
 

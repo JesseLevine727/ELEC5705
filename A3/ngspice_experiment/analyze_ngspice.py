@@ -15,6 +15,7 @@ N_BITS = 5
 VFS = 0.45
 VCM = 0.7
 FS = 500e6
+TIMING_TSTOP_NS = 6.0
 
 
 def load_wrdata_table(path: Path):
@@ -98,6 +99,7 @@ def main():
         ax.step(time_ns, values, where="post", linewidth=1.5)
         ax.set_ylabel(name)
         ax.grid(True, alpha=0.3)
+        ax.set_xlim(0, TIMING_TSTOP_NS)
     axes[-1].set_xlabel("Time [ns]")
     fig.suptitle("ngspice Behavioral SAR Timing Trace")
     fig.tight_layout()
