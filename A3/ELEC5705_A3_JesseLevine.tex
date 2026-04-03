@@ -20,9 +20,10 @@ The objective of this assignment is to implement and verify the SAR logic for a 
 In this submission, the SAR logic is implemented and cross-checked using two open-source behavioral flows:
 \begin{itemize}
     \item an Icarus Verilog/SystemVerilog simulation of the asynchronous controller,
-    \item an \texttt{ngspice} behavioral experiment that reproduces the same successive-approximation process inside the \texttt{ngspice} control language.
+    \item an \texttt{ngspice} behavioral experiment that reproduces the same successive-approximation process inside the \texttt{ngspice} control language,
+    \item a Yosys gate-level synthesis of the SAR controller RTL.
 \end{itemize}
-In both cases, the comparator is modeled behaviorally from the StrongARM latch transient results obtained in Assignment 2, rather than by reusing the original Cadence transistor-level implementation directly.
+In the behavioral verification flows, the comparator is modeled from the StrongARM latch transient results obtained in Assignment 2, rather than by reusing the original Cadence transistor-level implementation directly.
 
 \section{Behavioral Model}
 The ADC resolution is 5 bits, so the LSB is
@@ -59,10 +60,11 @@ The simulation produces:
     \item the internal logic timing waveforms,
     \item the output codes for 1024 samples,
     \item the conversion-time distribution,
-    \item an FFT-based SNDR and ENOB calculation.
+    \item an FFT-based SNDR and ENOB calculation,
+    \item a gate-level digital realization of the SAR controller.
 \end{itemize}
 
-The Icarus flow models the SAR controller directly in SystemVerilog and drives it with a StrongARM-inspired comparator module. The \texttt{ngspice} flow does not use Verilog-A; instead, it implements the same 5-bit asynchronous approximation loop behaviorally in the \texttt{ngspice} control language using the same A2-derived comparator timing assumptions. The purpose of the second flow is to verify that the reported results are not an artifact of one simulator.
+The Icarus flow models the SAR controller directly in SystemVerilog and drives it with a StrongARM-inspired comparator module. The \texttt{ngspice} flow does not use Verilog-A; instead, it implements the same 5-bit asynchronous approximation loop behaviorally in the \texttt{ngspice} control language using the same A2-derived comparator timing assumptions. The purpose of the second flow is to verify that the reported results are not an artifact of one simulator. In addition, the controller RTL was rewritten in a synthesis-oriented form and mapped to a gate-level netlist with Yosys as a structural digital cross-check.
 
 \section{Results}
 Table~\ref{tab:summary} summarizes the key results.
@@ -157,7 +159,34 @@ ENOB & 4.88 bits & 4.88 bits & 0.00 bits \\
 
 The agreement between the two methods is extremely close. The conversion-time difference is below \SI{1}{ps}, and SNDR/ENOB are effectively identical. This indicates that the reported Assignment 3 behavior is determined by the SAR algorithm and the A2-derived StrongARM timing model rather than by a simulator-specific implementation detail.
 
+\section{Gate-Level Synthesis Cross-Check}
+The SAR controller was also synthesized with Yosys to confirm that the digital control algorithm can be realized as a conventional gate-level circuit. This synthesis step was applied only to the controller block, not to the analog comparator or DAC. Therefore, it is a digital structural cross-check rather than a transistor-level ADC implementation.
+
+The synthesized netlist contains 79 cells in total. Table~\ref{tab:synth} summarizes the main gate and storage elements reported by Yosys.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lc}
+\toprule
+Cell type & Count \\
+\midrule
+\texttt{\$\_DFFE\_PN0P\_} & 18 \\
+\texttt{\$\_DFFE\_PN1P\_} & 1 \\
+\texttt{\$\_DFF\_PN0\_} & 1 \\
+\texttt{\$\_AND\_} & 35 \\
+\texttt{\$\_OR\_} & 11 \\
+\texttt{\$\_NOT\_} & 7 \\
+\texttt{\$\_MUX\_} & 5 \\
+\texttt{\$\_XOR\_} & 1 \\
+\bottomrule
+\end{tabular}
+\caption{Yosys synthesis result for the SAR controller gate-level netlist.}
+\label{tab:synth}
+\end{table}
+
+This synthesis result is useful because it shows that the same successive-approximation controller can be represented not only behaviorally but also as a concrete gate-level digital circuit. However, it does not replace the analog verification flow. The comparator timing, DAC behavior, SNDR, and ENOB results still come from the behavioral mixed-signal abstractions described earlier.
+
 \section{Conclusion}
-A 5-bit asynchronous SAR controller was implemented and verified using two open-source behavioral simulation flows. The comparator behavior was derived from the StrongARM latch designed in Assignment 2, allowing the SAR logic to be evaluated with a realistic decision-time model. Both the Icarus Verilog and \texttt{ngspice} methods produced essentially the same result, showing correct bit-cycling, asynchronous next-bit timing, and near-ideal 5-bit dynamic performance. The final reported performance is approximately \SI{31.12}{dB} SNDR and 4.88 bits ENOB, with sub-\SI{0.6}{ns} total conversion time.
+A 5-bit asynchronous SAR controller was implemented and verified using two open-source behavioral simulation flows and one gate-level synthesis flow. The comparator behavior was derived from the StrongARM latch designed in Assignment 2, allowing the SAR logic to be evaluated with a realistic decision-time model. Both the Icarus Verilog and \texttt{ngspice} methods produced essentially the same result, showing correct bit-cycling, asynchronous next-bit timing, and near-ideal 5-bit dynamic performance. The additional Yosys synthesis confirmed that the controller can also be mapped to a conventional digital gate-level netlist. The final reported performance is approximately \SI{31.12}{dB} SNDR and 4.88 bits ENOB, with sub-\SI{0.6}{ns} total conversion time.
 
 \end{document}
