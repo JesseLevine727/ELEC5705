@@ -1,0 +1,124 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{siunitx}
+\usepackage[T1]{fontenc}
+
+\title{ELEC 5705 Assignment 3\\5-Bit Asynchronous SAR Logic}
+\author{Jesse Levine \\ 101185127}
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\section{Objective}
+The objective of this assignment is to implement and verify the SAR logic for a 5-bit asynchronous SAR ADC operating at \SI{500}{MS/s} over a \SI{450}{mV} dynamic range. Assignment 2 focused on the comparator design. For Assignment 3, the emphasis is the control loop that performs the successive-approximation process and generates the next-bit decision timing without a fixed per-bit clock.
+
+In this submission, the SAR logic is implemented in an open-source behavioral simulation flow using Icarus Verilog. The comparator is modeled behaviorally from the StrongARM latch transient results obtained in Assignment 2, rather than by reusing the original Cadence transistor-level implementation directly.
+
+\section{Behavioral Model}
+The ADC resolution is 5 bits, so the LSB is
+\begin{equation}
+\mathrm{LSB} = \frac{450\ \mathrm{mV}}{2^5} = 14.0625\ \mathrm{mV}.
+\end{equation}
+
+The simulated architecture consists of:
+\begin{itemize}
+    \item a 5-bit asynchronous SAR controller,
+    \item an ideal 5-bit DAC,
+    \item a StrongARM-inspired behavioral comparator,
+    \item a sinusoidal input sampled at \SI{500}{MS/s}.
+\end{itemize}
+
+The controller begins each conversion by asserting the MSB trial code. After each comparator decision becomes valid, the logic either keeps or clears the current bit and immediately applies the next lower trial bit. This emulates asynchronous operation, where progression depends on comparator resolve time rather than a global bit clock.
+
+\subsection{Comparator Model Derived from Assignment 2}
+The comparator model is based on the StrongARM latch results from Assignment 2:
+\begin{itemize}
+    \item nominal decision time: approximately \SI{124}{ps},
+    \item minimum decision time bound: \SI{60}{ps},
+    \item maximum decision time bound: \SI{250}{ps},
+    \item required minimum overdrive near $0.5$ LSB.
+\end{itemize}
+
+The behavioral delay is made overdrive-dependent so that larger $|V_{in} - V_{DAC}|$ produces a faster comparator decision, while smaller overdrive increases resolve time. This captures the key timing behavior of the StrongARM latch relevant to asynchronous SAR sequencing.
+
+\section{Simulation Setup}
+The testbench uses a near full-scale sinusoidal input centered at \SI{0.7}{V}, with a peak amplitude equal to $0.95 \times \frac{V_{FS}}{2}$. One conversion starts every \SI{2}{ns}, corresponding to the required \SI{500}{MS/s} rate.
+
+The simulation produces:
+\begin{itemize}
+    \item the internal logic timing waveforms,
+    \item the output codes for 1024 samples,
+    \item the conversion-time distribution,
+    \item an FFT-based SNDR and ENOB calculation.
+\end{itemize}
+
+\section{Results}
+Table~\ref{tab:summary} summarizes the key results.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+Parameter & Result \\
+\midrule
+LSB & \SI{14.062}{mV} \\
+Average conversion time & \SI{477.9}{ps} \\
+Worst-case conversion time & \SI{512.0}{ps} \\
+SNDR & \SI{31.12}{dB} \\
+ENOB & 4.88 bits \\
+\bottomrule
+\end{tabular}
+\caption{Summary of behavioral simulation results.}
+\label{tab:summary}
+\end{table}
+
+Figure~\ref{fig:timing} shows the asynchronous control behavior. The \texttt{start} pulse begins a conversion, the comparator model produces \texttt{comp\_valid} when a decision is ready, and the SAR logic updates the trial code immediately after each valid comparison. This confirms that the controller advances by comparator-ready events rather than by a fixed bit clock.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{open_source_flow/figures_report/waveform_timing.png}
+\caption{Asynchronous SAR logic timing with StrongARM-based comparator model.}
+\label{fig:timing}
+\end{figure}
+
+Figure~\ref{fig:io} compares the analog input with the DAC-equivalent output produced by the SAR code. The staircase output tracks the input with the expected 5-bit quantization levels across the \SI{450}{mV} dynamic range.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{open_source_flow/figures_report/input_output_codes.png}
+\caption{Input waveform and quantized output code behavior.}
+\label{fig:io}
+\end{figure}
+
+Figure~\ref{fig:hist} shows the total conversion-time distribution. Because the comparator delay is overdrive-dependent, the conversion time is not constant from sample to sample. This spread is expected in an asynchronous SAR ADC and is consistent with StrongARM latch behavior.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{open_source_flow/figures_report/conversion_time_histogram.png}
+\caption{Distribution of asynchronous conversion time.}
+\label{fig:hist}
+\end{figure}
+
+Figure~\ref{fig:spectrum} shows the output spectrum used to calculate SNDR and ENOB. The measured ENOB is
+\begin{equation}
+\mathrm{ENOB} = \frac{\mathrm{SNDR} - 1.76}{6.02}
+= \frac{31.12 - 1.76}{6.02} \approx 4.88\ \mathrm{bits}.
+\end{equation}
+This is close to ideal 5-bit behavior for the present behavioral model.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{open_source_flow/figures_report/output_spectrum.png}
+\caption{Output spectrum used for SNDR and ENOB calculation.}
+\label{fig:spectrum}
+\end{figure}
+
+\section{Conclusion}
+A 5-bit asynchronous SAR controller was implemented and verified using an open-source behavioral simulation flow. The comparator behavior was derived from the StrongARM latch designed in Assignment 2, allowing the SAR logic to be evaluated with a realistic decision-time model. The results show correct bit-cycling, asynchronous next-bit timing, and near-ideal 5-bit dynamic performance, with an average conversion time of \SI{477.9}{ps} and an ENOB of 4.88 bits.
+
+\end{document}
