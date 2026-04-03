@@ -17,7 +17,12 @@
 \section{Objective}
 The objective of this assignment is to implement and verify the SAR logic for a 5-bit asynchronous SAR ADC operating at \SI{500}{MS/s} over a \SI{450}{mV} dynamic range. Assignment 2 focused on the comparator design. For Assignment 3, the emphasis is the control loop that performs the successive-approximation process and generates the next-bit decision timing without a fixed per-bit clock.
 
-In this submission, the SAR logic is implemented in an open-source behavioral simulation flow using Icarus Verilog. The comparator is modeled behaviorally from the StrongARM latch transient results obtained in Assignment 2, rather than by reusing the original Cadence transistor-level implementation directly.
+In this submission, the SAR logic is implemented and cross-checked using two open-source behavioral flows:
+\begin{itemize}
+    \item an Icarus Verilog/SystemVerilog simulation of the asynchronous controller,
+    \item an \texttt{ngspice} behavioral experiment that reproduces the same successive-approximation process inside the \texttt{ngspice} control language.
+\end{itemize}
+In both cases, the comparator is modeled behaviorally from the StrongARM latch transient results obtained in Assignment 2, rather than by reusing the original Cadence transistor-level implementation directly.
 
 \section{Behavioral Model}
 The ADC resolution is 5 bits, so the LSB is
@@ -56,6 +61,8 @@ The simulation produces:
     \item the conversion-time distribution,
     \item an FFT-based SNDR and ENOB calculation.
 \end{itemize}
+
+The Icarus flow models the SAR controller directly in SystemVerilog and drives it with a StrongARM-inspired comparator module. The \texttt{ngspice} flow does not use Verilog-A; instead, it implements the same 5-bit asynchronous approximation loop behaviorally in the \texttt{ngspice} control language using the same A2-derived comparator timing assumptions. The purpose of the second flow is to verify that the reported results are not an artifact of one simulator.
 
 \section{Results}
 Table~\ref{tab:summary} summarizes the key results.
@@ -118,7 +125,39 @@ This is close to ideal 5-bit behavior for the present behavioral model.
 \label{fig:spectrum}
 \end{figure}
 
+\section{Cross-Check with ngspice}
+To compare simulation frameworks, the same assignment was also implemented in a separate \texttt{ngspice} behavioral experiment. This version uses the same sinusoidal stimulus, the same DAC transfer function, and the same StrongARM-based comparator timing model from Assignment 2. Instead of instantiating a SystemVerilog SAR controller, the successive-approximation loop is executed in the \texttt{ngspice} control language and exported as waveform and code data.
+
+The \texttt{ngspice} timing trace for the first conversion is shown in Fig.~\ref{fig:ngtiming}. The sequence of \texttt{start}, comparator-valid, trial code update, and end-of-conversion follows the same asynchronous logic behavior observed in the Icarus flow.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{ngspice_experiment/figures_report/waveform_timing.png}
+\caption{Behavioral asynchronous SAR timing reproduced in the \texttt{ngspice} experiment.}
+\label{fig:ngtiming}
+\end{figure}
+
+Table~\ref{tab:compare} compares the numerical results from both open-source methods.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lccc}
+\toprule
+Metric & Icarus Verilog & ngspice & Difference \\
+\midrule
+Average conversion time & \SI{477.9}{ps} & \SI{478.6}{ps} & \SI{+0.7}{ps} \\
+Worst conversion time & \SI{512.0}{ps} & \SI{512.4}{ps} & \SI{+0.4}{ps} \\
+SNDR & \SI{31.12}{dB} & \SI{31.12}{dB} & \SI{-0.00}{dB} \\
+ENOB & 4.88 bits & 4.88 bits & 0.00 bits \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of the two open-source behavioral verification methods.}
+\label{tab:compare}
+\end{table}
+
+The agreement between the two methods is extremely close. The conversion-time difference is below \SI{1}{ps}, and SNDR/ENOB are effectively identical. This indicates that the reported Assignment 3 behavior is determined by the SAR algorithm and the A2-derived StrongARM timing model rather than by a simulator-specific implementation detail.
+
 \section{Conclusion}
-A 5-bit asynchronous SAR controller was implemented and verified using an open-source behavioral simulation flow. The comparator behavior was derived from the StrongARM latch designed in Assignment 2, allowing the SAR logic to be evaluated with a realistic decision-time model. The results show correct bit-cycling, asynchronous next-bit timing, and near-ideal 5-bit dynamic performance, with an average conversion time of \SI{477.9}{ps} and an ENOB of 4.88 bits.
+A 5-bit asynchronous SAR controller was implemented and verified using two open-source behavioral simulation flows. The comparator behavior was derived from the StrongARM latch designed in Assignment 2, allowing the SAR logic to be evaluated with a realistic decision-time model. Both the Icarus Verilog and \texttt{ngspice} methods produced essentially the same result, showing correct bit-cycling, asynchronous next-bit timing, and near-ideal 5-bit dynamic performance. The final reported performance is approximately \SI{31.12}{dB} SNDR and 4.88 bits ENOB, with sub-\SI{0.6}{ns} total conversion time.
 
 \end{document}
