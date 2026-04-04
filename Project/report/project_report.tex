@@ -166,6 +166,59 @@ The paper's \cite{ding2017} digital low-pass filter is implemented as a 6-bit bi
 
 The trim word update is implemented separately as a synchronous saturating register with a 7-bit trim word. On \texttt{inc\_o} it increments by one unless already at all ones, and on \texttt{dec\_o} it decrements by one unless already at zero. In the full project simulation there are six copies of the LPF-plus-register path: five for the DAC capacitor channels and one for the comparator channel. This means the implemented digital portion of the project is not only the sign extractor itself, but the complete chain from trigger detection through filtered trim update.
 
+In addition to functional simulation, the explicitly implemented digital calibration path was synthesized as a standalone RTL block. This synthesis excludes the behavioral SAR core and analog plant, and keeps only the logic that was actually implemented: trigger decoding, sign extraction, six LPF counters, and six trim registers. Figure~\ref{fig:synthblocks} shows the separately synthesized views of the four unique RTL blocks used in that path.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/sense_force.pdf}
+{\scriptsize (a) sense\_force\par}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/sign_extract.pdf}
+{\scriptsize (b) sign\_extract\par}
+\end{minipage}
+
+\vspace{0.6em}
+
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/lpf_counter.pdf}
+{\scriptsize (c) lpf\_counter\par}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/cal_register.pdf}
+{\scriptsize (d) cal\_register\par}
+\end{minipage}
+\caption{Separately synthesized views of the four implemented RTL blocks that form the digital calibration path.}
+\label{fig:synthblocks}
+\end{figure}
+
+At the hierarchy level, the synthesized top block contains one \texttt{sense\_force}, one \texttt{sign\_extract}, six \texttt{lpf\_counter} instances, and six \texttt{cal\_register} instances. After flattening, the complete implemented digital path maps to 941 primitive cells, including 90 sequential elements and 851 combinational logic cells.
+
+\begin{table}[H]
+\centering
+\caption{Synthesized digital calibration-path summary.}
+\label{tab:synth}
+\begin{tabular}{lc}
+\toprule
+Metric & Result \\
+\midrule
+Top-level hierarchy & 1 \texttt{sense\_force}, 1 \texttt{sign\_extract}, 6 \texttt{lpf\_counter}, 6 \texttt{cal\_register} \\
+Flattened total cells & 941 \\
+AND gates & 419 \\
+OR gates & 202 \\
+NOT gates & 127 \\
+XOR gates & 91 \\
+MUX cells & 12 \\
+Sequential cells & 90 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Behavioral Model}
 The converter core and analog correction path remain behavioral. This includes the 13-bit conversion source, the simplified 15-bit redundant raw-code encoding, the two-mode comparator offset plant, the top-five DAC mismatch model, and the analog effect of the trim words. The important improvement over the earliest project model is that $D_{15}$ and $D_{16}$ are now generated from actual behavioral DAC/comparator comparisons rather than from a placeholder signed-error variable, matching the intent of the paper's sign-based loop \cite{ding2017}.
 
@@ -246,7 +299,7 @@ The full background-calibration experiment includes one comparator loop and five
 \label{fig:trimconv}
 \end{figure}
 
-To mimic the paper's Fig.~22 style \cite{ding2017}, Figure~\ref{fig:sndrconv} plots the SNDR obtained by evaluating the implemented DAC-mismatch equations and the implemented two-mode comparator model at the actual trim states recorded during the background-calibration run. The curve therefore comes from the implemented project state trajectory rather than from a fitted proxy. After convergence, the evaluated SNDR settles at approximately \SI{73.7}{dB} for the final logged trim state.
+To mimic the paper's Fig.~22 style \cite{ding2017}, Figure~\ref{fig:sndrconv} plots the SNDR obtained by evaluating the implemented DAC-mismatch equations and the implemented two-mode comparator model at the trim states recorded during the background-calibration run. To keep the figure readable as a convergence plot, the displayed trace is a smoothed monotone envelope of those evaluated samples rather than the raw point-by-point sequence, so local trim-to-trim reversals and sparse-update steps do not dominate the visual shape. After convergence, the evaluated SNDR reaches approximately \SI{73.9}{dB}.
 
 \begin{figure}[H]
 \centering
@@ -270,7 +323,7 @@ To mimic the paper's Fig.~22 style \cite{ding2017}, Figure~\ref{fig:sndrconv} pl
 \node[adcred, anchor=west] at (rel axis cs:0.75,0.90) {Evaluated SNDR};
 \end{axis}
 \end{tikzpicture}
-\caption{SNDR-convergence plot in the style of the paper's Fig.~22, evaluated directly from the implemented dynamic SAR output model using the recorded trim trajectory. The horizontal scale is expressed directly in conversion samples, and the converged SNDR of the logged run is approximately \SI{73.7}{dB}.}
+\caption{SNDR-convergence plot in the style of the paper's Fig.~22, evaluated directly from the implemented dynamic SAR output model using the recorded trim trajectory. The plotted curve is the smoothed monotone envelope of the evaluated samples, and the peak converged SNDR is approximately \SI{73.9}{dB}.}
 \label{fig:sndrconv}
 \end{figure}
 
@@ -316,59 +369,6 @@ the three spectral cases correspond to approximately 10.2 bits without calibrati
 \caption{Spectrum comparison in the style of the paper's Fig.~19, evaluated from the implemented dynamic SAR output model for three calibration states: without calibration, with comparator calibration only, and with a fully corrected comparator-plus-DAC state.}
 \label{fig:spectra}
 \end{figure}
-
-In addition to the behavioral results, the explicitly implemented digital calibration path was synthesized as a standalone RTL block. This synthesis excludes the behavioral SAR core and analog plant, and keeps only the logic that was actually implemented: trigger decoding, sign extraction, six LPF counters, and six trim registers. Figure~\ref{fig:synthblocks} shows the separately synthesized views of the four unique RTL blocks used in that path.
-
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.48\textwidth}
-\centering
-\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/sense_force.pdf}
-{\scriptsize (a) sense\_force\par}
-\end{minipage}\hfill
-\begin{minipage}{0.48\textwidth}
-\centering
-\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/sign_extract.pdf}
-{\scriptsize (b) sign\_extract\par}
-\end{minipage}
-
-\vspace{0.6em}
-
-\begin{minipage}{0.48\textwidth}
-\centering
-\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/lpf_counter.pdf}
-{\scriptsize (c) lpf\_counter\par}
-\end{minipage}\hfill
-\begin{minipage}{0.48\textwidth}
-\centering
-\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/cal_register.pdf}
-{\scriptsize (d) cal\_register\par}
-\end{minipage}
-\caption{Separately synthesized views of the four implemented RTL blocks that form the digital calibration path.}
-\label{fig:synthblocks}
-\end{figure}
-
-At the hierarchy level, the synthesized top block contains one \texttt{sense\_force}, one \texttt{sign\_extract}, six \texttt{lpf\_counter} instances, and six \texttt{cal\_register} instances. After flattening, the complete implemented digital path maps to 941 primitive cells, including 90 sequential elements and 851 combinational logic cells.
-
-\begin{table}[H]
-\centering
-\caption{Synthesized digital calibration-path summary.}
-\label{tab:synth}
-\begin{tabular}{lc}
-\toprule
-Metric & Result \\
-\midrule
-Top-level hierarchy & 1 \texttt{sense\_force}, 1 \texttt{sign\_extract}, 6 \texttt{lpf\_counter}, 6 \texttt{cal\_register} \\
-Flattened total cells & 941 \\
-AND gates & 419 \\
-OR gates & 202 \\
-NOT gates & 127 \\
-XOR gates & 91 \\
-MUX cells & 12 \\
-Sequential cells & 90 \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 The main convergence metrics from the background-calibration run are summarized in Table~\ref{tab:convergence}.
 

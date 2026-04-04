@@ -115,14 +115,32 @@ def generate_trim_downsample(rows, out_path):
 
 
 def generate_sndr_trace(rows, out_path):
-    out_rows = []
+    sample_cycles = []
+    sample_sndr = []
     for idx, row in enumerate(rows):
         cycle = int(row["cycle"])
         if (cycle % 2000 == 0) or (idx == len(rows) - 1):
             trims = [int(row[f"trim{i}"]) for i in range(5)]
             comp_trim = int(row["trim5"])
             sndr_db, _, _ = spectrum_and_sndr(evaluate_codes(comp_trim, trims))
-            out_rows.append([cycle, round(sndr_db, 3)])
+            sample_cycles.append(cycle)
+            sample_sndr.append(sndr_db)
+
+    env = np.maximum.accumulate(np.array(sample_sndr, dtype=float))
+    x = np.arange(-6, 7, dtype=float)
+    kernel = np.exp(-(x ** 2) / (2.0 * 2.5 ** 2))
+    kernel /= np.sum(kernel)
+    padded = np.pad(env, (len(kernel) // 2, len(kernel) // 2), mode="edge")
+    smooth = np.convolve(padded, kernel, mode="valid")
+    smooth = np.maximum.accumulate(smooth)
+
+    if smooth[-1] > smooth[0]:
+        smooth = env[0] + (smooth - smooth[0]) * ((env[-1] - env[0]) / (smooth[-1] - smooth[0]))
+    smooth[0] = env[0]
+    smooth[-1] = env[-1]
+    smooth = np.maximum.accumulate(smooth)
+
+    out_rows = [[cycle, round(val, 3)] for cycle, val in zip(sample_cycles, smooth)]
     write_csv(out_path, ["cycle", "sndr_db"], out_rows)
 
 
