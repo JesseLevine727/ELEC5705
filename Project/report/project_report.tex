@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{graphicx}
 \usepackage{siunitx}
 \usepackage[T1]{fontenc}
 \usepackage{tikz}
@@ -44,7 +45,7 @@
 \end{titlepage}
 
 \begin{abstract}
-This project reimplements the background calibration architecture of the 46~\si{\micro\watt}, 13-bit, 6.4~MS/s SAR ADC reported by Ding \emph{et al.} using a hybrid methodology. The ADC core, DAC mismatch, comparator modes, and analog correction path are modeled behaviorally, while the sign extraction and immediate calibration-control path are implemented explicitly in RTL. The final model reproduces sparse background operation and converges in 384243 conversions with an active calibration rate of approximately 1.37\%, close to the paper's reported convergence scale of roughly 400k cycles.
+This project reimplements the background calibration architecture of the 46~$\mu$W, 13-bit, 6.4~MS/s SAR ADC reported by Ding \emph{et al.} using a hybrid methodology. The ADC core, DAC mismatch, comparator modes, and analog correction path are modeled behaviorally, while the sign extraction and immediate calibration-control path are implemented explicitly in RTL. The final model reproduces sparse background operation and converges in 384243 conversions with an active calibration rate of approximately 1.37\%, close to the paper's reported convergence scale of roughly 400k cycles.
 \end{abstract}
 
 \section{Objective}
@@ -64,8 +65,6 @@ Figure~\ref{fig:top_arch} shows the overall project partition. The behavioral si
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-    scale=0.86,
-    transform shape,
     font=\footnotesize,
     >=Latex,
     blk/.style={draw, rounded corners=2pt, thick, minimum height=0.9cm, align=center, text width=2.45cm, inner sep=3.2pt},
@@ -77,8 +76,8 @@ Figure~\ref{fig:top_arch} shows the overall project partition. The behavioral si
     \node[beh, right=0.9cm of stim] (sar) {Behavioral SAR core\\13-bit conversion\\15 raw cycles};
     \node[beh, right=0.9cm of sar] (plant) {Behavioral calibration plant\\two-mode comparator\\top-5 DAC mismatch};
 
-    \node[rtl, below=1.45cm of sar] (sense) {\texttt{sense\_force}\\trigger detect};
-    \node[rtl, below=1.45cm of plant] (sign) {\texttt{sign\_extract}\\$D_{15},D_{16}$ decode};
+    \node[rtl] (sense) at ($(sar.south)+(0,-1.45cm)$) {\texttt{sense\_force}\\trigger detect};
+    \node[rtl] (sign) at ($(plant.center |- sense.center)$) {\texttt{sign\_extract}\\$D_{15},D_{16}$ decode};
     \node[rtl, right=0.9cm of sign] (lpf) {\texttt{lpf\_counter}\\6-bit bidirectional LPF};
     \node[rtl, right=0.9cm of lpf] (reg) {\texttt{cal\_register}\\trim update};
 
@@ -89,9 +88,9 @@ Figure~\ref{fig:top_arch} shows the overall project partition. The behavioral si
     \draw[arr] (sar) -- (plant);
     \draw[arr] (sar.south) -- (sense.north);
     \draw[arr] (plant.south) -- (sign.north);
-    \draw[arr] (sense) -- (sign);
-    \draw[arr] (sign) -- (lpf);
-    \draw[arr] (lpf) -- (reg);
+    \draw[arr] (sense.east) -- (sign.west);
+    \draw[arr] (sign.east) -- (lpf.west);
+    \draw[arr] (lpf.east) -- (reg.west);
     \draw[arr] (reg.north) |- ($(plant.south east)+(0.15,0)$);
     \node[font=\scriptsize, anchor=west] at ($(reg.north)+(0.08,0.52)$) {trim words};
 \end{tikzpicture}
@@ -104,6 +103,8 @@ Figure~\ref{fig:sign_flow} shows the implemented sign path in a paper-style cycl
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
+    scale=0.86,
+    transform shape,
     font=\footnotesize,
     >=Latex,
     box/.style={draw, rounded corners=2pt, thick, minimum height=0.9cm, align=center, text width=4.0cm, inner sep=4pt},
@@ -168,7 +169,7 @@ The trim word update is implemented separately as a synchronous saturating regis
 \section{Behavioral Model}
 The converter core and analog correction path remain behavioral. This includes the 13-bit conversion source, the simplified 15-bit redundant raw-code encoding, the two-mode comparator offset plant, the top-five DAC mismatch model, and the analog effect of the trim words. The important improvement over the earliest project model is that $D_{15}$ and $D_{16}$ are now generated from actual behavioral DAC/comparator comparisons rather than from a placeholder signed-error variable, matching the intent of the paper's sign-based loop \cite{ding2017}.
 
-The DAC side uses explicit trim-dependent weight perturbations for the top five capacitors, so a change in trim word directly changes the converter transfer behavior. The comparator side uses two effective operating modes, which allows the calibration loop to act on a mode-dependent offset difference rather than on a single static comparator error. This is still a system-level model, but it is much closer to the implemented calibration mechanism than the earlier placeholder-error version.
+The DAC side uses explicit trim-dependent weight perturbations for the top five capacitors, so a change in trim word directly changes the converter transfer behavior. The comparator side uses two effective operating modes together with a residue-dependent dynamic offset term, which allows the calibration loop to act on the kind of signal-dependent comparator error discussed in the paper \cite{ding2017} rather than on a single static threshold shift. This is still a system-level model, but it is much closer to the implemented calibration mechanism than the earlier placeholder-error version.
 
 \section{Results}
 \subsection{Single-Loop Sanity Checks}
@@ -245,7 +246,7 @@ The full background-calibration experiment includes one comparator loop and five
 \label{fig:trimconv}
 \end{figure}
 
-To mimic the paper's Fig.~22 style \cite{ding2017}, Figure~\ref{fig:sndrconv} plots the SNDR obtained by evaluating the implemented DAC-mismatch equations and the implemented two-mode comparator model at the actual trim states recorded during the background-calibration run. The curve therefore comes from the implemented project state trajectory rather than from a fitted proxy. After convergence, the evaluated SNDR settles at approximately \SI{73.8}{dB}.
+To mimic the paper's Fig.~22 style \cite{ding2017}, Figure~\ref{fig:sndrconv} plots the SNDR obtained by evaluating the implemented DAC-mismatch equations and the implemented two-mode comparator model at the actual trim states recorded during the background-calibration run. The curve therefore comes from the implemented project state trajectory rather than from a fitted proxy. After convergence, the evaluated SNDR settles at approximately \SI{73.7}{dB} for the final logged trim state.
 
 \begin{figure}[H]
 \centering
@@ -269,13 +270,19 @@ To mimic the paper's Fig.~22 style \cite{ding2017}, Figure~\ref{fig:sndrconv} pl
 \node[adcred, anchor=west] at (rel axis cs:0.75,0.90) {Evaluated SNDR};
 \end{axis}
 \end{tikzpicture}
-\caption{SNDR-convergence plot in the style of the paper's Fig.~22, evaluated directly from the implemented dynamic SAR output model using the recorded trim trajectory. The horizontal scale is expressed directly in conversion samples, and the converged SNDR is approximately \SI{73.8}{dB}.}
+\caption{SNDR-convergence plot in the style of the paper's Fig.~22, evaluated directly from the implemented dynamic SAR output model using the recorded trim trajectory. The horizontal scale is expressed directly in conversion samples, and the converged SNDR of the logged run is approximately \SI{73.7}{dB}.}
 \label{fig:sndrconv}
 \end{figure}
 
 Figure~\ref{fig:spectra} recreates the paper's \cite{ding2017} three-scenario spectrum comparison using the implemented project model: without calibration, with comparator-offset calibration only, and with a fully corrected comparator-plus-DAC trim state. These spectra are evaluated from the same dynamic SAR output model used for Figure~\ref{fig:sndrconv}; however, Figure~\ref{fig:spectra} uses a fair endpoint comparison, while Figure~\ref{fig:sndrconv} shows the actual implemented convergence trajectory.
 
-This distinction is important for interpreting the figures. Figure~\ref{fig:sndrconv} answers how the implemented loop evolves under sparse background updates, whereas Figure~\ref{fig:spectra} compares three specific operating points using a common final-state evaluation method. Taken together, they show both the convergence process and the endpoint spectral behavior.
+This distinction is important for interpreting the figures. Figure~\ref{fig:sndrconv} answers how the implemented loop evolves under sparse background updates, whereas Figure~\ref{fig:spectra} compares three specific operating points using a common final-state evaluation method. Taken together, they show both the convergence process and the endpoint spectral behavior. In the corrected evaluator, the comparator-only case already removes the dominant mode-dependent comparator distortion, but the calibrated DAC weights still contribute a further improvement of roughly \SI{3.1}{dB} in SNDR, which is now visible in the final spectrum comparison.
+
+Using the standard relation
+\[
+\mathrm{ENOB} = \frac{\mathrm{SNDR} - 1.76}{6.02},
+\]
+the three spectral cases correspond to approximately 10.2 bits without calibration, 11.5 bits with comparator calibration only, and 12.0 bits with both comparator and DAC calibration enabled. This ENOB view is useful because it expresses the same spectral improvement in directly ADC-oriented terms: the implemented calibration loop recovers about 1.8 effective bits relative to the uncalibrated case, while the DAC calibration path still adds roughly 0.5 effective bits beyond comparator-only correction.
 
 \begin{figure}[H]
 \centering
@@ -295,11 +302,11 @@ This distinction is important for interpreting the figures. Figure~\ref{fig:sndr
 ]
 \nextgroupplot[title={Without calibration}]
 \addplot[adcgray, very thick] table[x=freq_mhz,y=dbfs,col sep=comma] {data/spectrum_uncal.csv};
-\node[anchor=north east] at (rel axis cs:0.97,0.94) {SNDR = 63.0 dB};
+\node[anchor=north east] at (rel axis cs:0.97,0.94) {SNDR = 62.9 dB};
 
 \nextgroupplot[title={With comparator calibration only}]
 \addplot[adcorange, very thick] table[x=freq_mhz,y=dbfs,col sep=comma] {data/spectrum_comp_only.csv};
-\node[anchor=north east] at (rel axis cs:0.97,0.94) {SNDR = 73.8 dB};
+\node[anchor=north east] at (rel axis cs:0.97,0.94) {SNDR = 70.8 dB};
 
 \nextgroupplot[title={With comparator and DAC calibration}, xlabel={Frequency (MHz)}]
 \addplot[adcgreen, very thick] table[x=freq_mhz,y=dbfs,col sep=comma] {data/spectrum_both.csv};
@@ -309,6 +316,59 @@ This distinction is important for interpreting the figures. Figure~\ref{fig:sndr
 \caption{Spectrum comparison in the style of the paper's Fig.~19, evaluated from the implemented dynamic SAR output model for three calibration states: without calibration, with comparator calibration only, and with a fully corrected comparator-plus-DAC state.}
 \label{fig:spectra}
 \end{figure}
+
+In addition to the behavioral results, the explicitly implemented digital calibration path was synthesized as a standalone RTL block. This synthesis excludes the behavioral SAR core and analog plant, and keeps only the logic that was actually implemented: trigger decoding, sign extraction, six LPF counters, and six trim registers. Figure~\ref{fig:synthblocks} shows the separately synthesized views of the four unique RTL blocks used in that path.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/sense_force.pdf}
+{\scriptsize (a) sense\_force\par}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/sign_extract.pdf}
+{\scriptsize (b) sign\_extract\par}
+\end{minipage}
+
+\vspace{0.6em}
+
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/lpf_counter.pdf}
+{\scriptsize (c) lpf\_counter\par}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/cal_register.pdf}
+{\scriptsize (d) cal\_register\par}
+\end{minipage}
+\caption{Separately synthesized views of the four implemented RTL blocks that form the digital calibration path.}
+\label{fig:synthblocks}
+\end{figure}
+
+At the hierarchy level, the synthesized top block contains one \texttt{sense\_force}, one \texttt{sign\_extract}, six \texttt{lpf\_counter} instances, and six \texttt{cal\_register} instances. After flattening, the complete implemented digital path maps to 941 primitive cells, including 90 sequential elements and 851 combinational logic cells.
+
+\begin{table}[H]
+\centering
+\caption{Synthesized digital calibration-path summary.}
+\label{tab:synth}
+\begin{tabular}{lc}
+\toprule
+Metric & Result \\
+\midrule
+Top-level hierarchy & 1 \texttt{sense\_force}, 1 \texttt{sign\_extract}, 6 \texttt{lpf\_counter}, 6 \texttt{cal\_register} \\
+Flattened total cells & 941 \\
+AND gates & 419 \\
+OR gates & 202 \\
+NOT gates & 127 \\
+XOR gates & 91 \\
+MUX cells & 12 \\
+Sequential cells & 90 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 The main convergence metrics from the background-calibration run are summarized in Table~\ref{tab:convergence}.
 

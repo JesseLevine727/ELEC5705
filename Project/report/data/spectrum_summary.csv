@@ -1,4 +1,4 @@
 scenario,sndr_db,comp_trim,dac_trims
-uncal,63.038,0,0 0 0 0 0
-comp_only,73.823,20,0 0 0 0 0
+uncal,62.911,0,0 0 0 0 0
+comp_only,70.75,20,0 0 0 0 0
 both,73.881,20,20 18 16 14 12

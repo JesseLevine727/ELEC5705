@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980">
+<rect width="100%" height="100%" fill="white"/>
+<text x="70.0" y="52.0" font-size="28" fill="#111827" text-anchor="start" dominant-baseline="middle">sign_extract Synthesized View</text>
+<text x="70.0" y="84.0" font-size="15" fill="#4b5563" text-anchor="start" dominant-baseline="middle">Ports: teal   State/storage: blue   Logic cells: brown   Bit-slice connectors: gray</text>
+<line x1="780.0" y1="795.1" x2="621.1" y2="795.1" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="621.1" y1="729.0" x2="250.6" y2="146.0" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="146.0" x2="1030.0" y2="146.0" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="621.1" y1="795.1" x2="250.6" y2="218.3" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="218.3" x2="1030.0" y2="280.9" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="1030.0" y1="146.0" x2="250.6" y2="257.6" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="1030.0" y1="280.9" x2="250.6" y2="355.8" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="621.1" y1="691.7" x2="47.0" y2="795.1" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="642.6" x2="621.1" y2="691.7" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="642.6" x2="621.1" y2="729.0" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="642.6" x2="621.1" y2="795.1" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="621.1" y1="626.7" x2="621.1" y2="691.7" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="621.1" y1="371.7" x2="780.0" y2="795.1" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="621.1" y1="426.1" x2="621.1" y2="547.9" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="621.1" y1="547.9" x2="621.1" y2="729.0" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="722.5" x2="621.1" y2="426.1" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="722.5" x2="780.0" y2="795.1" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="722.5" x2="621.1" y2="626.7" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="794.5" x2="621.1" y2="371.7" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="794.5" x2="621.1" y2="547.9" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<line x1="250.6" y1="794.5" x2="621.1" y2="626.7" stroke="#9aa1a8" stroke-width="1.2" stroke-opacity="0.45"/>
+<circle cx="-4534.4" cy="146.0" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="-4514.4" y="146.0" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">ab_sel</text>
+<circle cx="-4296.9" cy="795.1" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="-4276.9" y="795.1" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">cal_mode_comp</text>
+<circle cx="250.6" cy="722.5" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="270.6" y="722.5" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">d15</text>
+<circle cx="250.6" cy="794.5" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="270.6" y="794.5" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">d16</text>
+<circle cx="250.6" cy="146.0" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="270.6" y="146.0" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">dec_i</text>
+<circle cx="250.6" cy="218.3" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="270.6" y="218.3" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">inc_i</text>
+<circle cx="250.6" cy="257.6" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="270.6" y="257.6" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">sign_neg</text>
+<circle cx="250.6" cy="355.8" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="270.6" y="355.8" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">sign_pos</text>
+<circle cx="47.0" cy="795.1" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="67.0" y="795.1" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">sign_valid</text>
+<circle cx="250.6" cy="642.6" r="14.0" fill="#0f766e" stroke="#0f766e"/>
+<text x="270.6" y="642.6" font-size="14" fill="#111827" text-anchor="start" dominant-baseline="middle">valid</text>
+<rect x="611.1" y="361.7" width="20.0" height="20.0" rx="3" ry="3" fill="#b45309" stroke="#b45309"/>
+<text x="639.1" y="371.7" font-size="11" fill="#111827" text-anchor="start" dominant-baseline="middle">$_NOT_|{&lt;p17&gt; Y}}</text>
+<rect x="611.1" y="416.1" width="20.0" height="20.0" rx="3" ry="3" fill="#b45309" stroke="#b45309"/>
+<text x="639.1" y="426.1" font-size="11" fill="#111827" text-anchor="start" dominant-baseline="middle">$_NOT_|{&lt;p17&gt; Y}}</text>
+<rect x="611.1" y="537.9" width="20.0" height="20.0" rx="3" ry="3" fill="#b45309" stroke="#b45309"/>
+<text x="639.1" y="547.9" font-size="11" fill="#111827" text-anchor="start" dominant-baseline="middle">$_AND_|{&lt;p17&gt; Y}}</text>
+<rect x="770.0" y="785.1" width="20.0" height="20.0" rx="3" ry="3" fill="#b45309" stroke="#b45309"/>
+<text x="798.0" y="795.1" font-size="11" fill="#111827" text-anchor="start" dominant-baseline="middle">$_AND_|{&lt;p17&gt; Y}}</text>
+<rect x="611.1" y="616.7" width="20.0" height="20.0" rx="3" ry="3" fill="#b45309" stroke="#b45309"/>
+<text x="639.1" y="626.7" font-size="11" fill="#111827" text-anchor="start" dominant-baseline="middle">$_XOR_|{&lt;p17&gt; Y}}</text>
+<rect x="611.1" y="681.7" width="20.0" height="20.0" rx="3" ry="3" fill="#b45309" stroke="#b45309"/>
+<text x="639.1" y="691.7" font-size="11" fill="#111827" text-anchor="start" dominant-baseline="middle">$_AND_|{&lt;p17&gt; Y}}</text>
+<rect x="611.1" y="719.0" width="20.0" height="20.0" rx="3" ry="3" fill="#b45309" stroke="#b45309"/>
+<text x="639.1" y="729.0" font-size="11" fill="#111827" text-anchor="start" dominant-baseline="middle">$_AND_|{&lt;p17&gt; Y}}</text>
+<rect x="611.1" y="785.1" width="20.0" height="20.0" rx="3" ry="3" fill="#b45309" stroke="#b45309"/>
+<text x="639.1" y="795.1" font-size="11" fill="#111827" text-anchor="start" dominant-baseline="middle">$_AND_|{&lt;p17&gt; Y}}</text>
+<circle cx="1030.0" cy="146.0" r="4.0" fill="#6b7280" stroke="#6b7280"/>
+<circle cx="1030.0" cy="280.9" r="4.0" fill="#6b7280" stroke="#6b7280"/>
+</svg>

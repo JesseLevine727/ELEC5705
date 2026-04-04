@@ -1,0 +1,1089 @@
+
+ /----------------------------------------------------------------------------\
+ |                                                                            |
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |                                                                            |
+ |  Copyright (C) 2012 - 2020  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |                                                                            |
+ |  Permission to use, copy, modify, and/or distribute this software for any  |
+ |  purpose with or without fee is hereby granted, provided that the above    |
+ |  copyright notice and this permission notice appear in all copies.         |
+ |                                                                            |
+ |  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES  |
+ |  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF          |
+ |  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR   |
+ |  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES    |
+ |  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN     |
+ |  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF   |
+ |  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.            |
+ |                                                                            |
+ \----------------------------------------------------------------------------/
+
+ Yosys 0.33 (git sha1 2584903a060)
+
+
+-- Executing script file `synth.ys' --
+
+1. Executing Verilog-2005 frontend: /home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv
+Parsing SystemVerilog input from `/home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv' to AST representation.
+Generating RTLIL representation for module `\sense_force'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: /home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv
+Parsing SystemVerilog input from `/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv' to AST representation.
+Generating RTLIL representation for module `\sign_extract'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: /home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv
+Parsing SystemVerilog input from `/home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv' to AST representation.
+Generating RTLIL representation for module `\lpf_counter'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: /home/elfo/Documents/ELEC5705/Project/rtl/cal_register.sv
+Parsing SystemVerilog input from `/home/elfo/Documents/ELEC5705/Project/rtl/cal_register.sv' to AST representation.
+Generating RTLIL representation for module `\cal_register'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: project_calibration_digital_top.sv
+Parsing SystemVerilog input from `project_calibration_digital_top.sv' to AST representation.
+Generating RTLIL representation for module `\project_calibration_digital_top'.
+Successfully finished Verilog frontend.
+
+6. Executing HIERARCHY pass (managing design hierarchy).
+
+6.1. Analyzing design hierarchy..
+Top module:  \project_calibration_digital_top
+Used module:     \cal_register
+Used module:     \lpf_counter
+Used module:     \sign_extract
+Used module:     \sense_force
+Parameter \WIDTH = 7
+Parameter \INIT = 0
+
+6.2. Executing AST frontend in derive mode using pre-parsed AST for module `\cal_register'.
+Parameter \WIDTH = 7
+Parameter \INIT = 0
+Generating RTLIL representation for module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Parameter \WIDTH = 7
+Parameter \INIT = 0
+Found cached RTLIL representation for module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Parameter \WIDTH = 7
+Parameter \INIT = 0
+Found cached RTLIL representation for module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Parameter \WIDTH = 7
+Parameter \INIT = 0
+Found cached RTLIL representation for module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Parameter \WIDTH = 7
+Parameter \INIT = 0
+Found cached RTLIL representation for module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Parameter \WIDTH = 7
+Parameter \INIT = 0
+Found cached RTLIL representation for module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Parameter \WIDTH = 6
+Parameter \INIT = 32
+
+6.3. Executing AST frontend in derive mode using pre-parsed AST for module `\lpf_counter'.
+Parameter \WIDTH = 6
+Parameter \INIT = 32
+Generating RTLIL representation for module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Parameter \WIDTH = 6
+Parameter \INIT = 32
+Found cached RTLIL representation for module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Parameter \WIDTH = 6
+Parameter \INIT = 32
+Found cached RTLIL representation for module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Parameter \WIDTH = 6
+Parameter \INIT = 32
+Found cached RTLIL representation for module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Parameter \WIDTH = 6
+Parameter \INIT = 32
+Found cached RTLIL representation for module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Parameter \WIDTH = 6
+Parameter \INIT = 32
+Found cached RTLIL representation for module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+
+6.4. Analyzing design hierarchy..
+Top module:  \project_calibration_digital_top
+Used module:     $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register
+Used module:     $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter
+Used module:     \sign_extract
+Used module:     \sense_force
+
+6.5. Analyzing design hierarchy..
+Top module:  \project_calibration_digital_top
+Used module:     $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register
+Used module:     $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter
+Used module:     \sign_extract
+Used module:     \sense_force
+Removing unused module `\cal_register'.
+Removing unused module `\lpf_counter'.
+Removed 2 unused modules.
+
+7. Executing PROC pass (convert processes to netlists).
+
+7.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+7.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 4 switch rules as full_case in process $proc$/home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv:16$79 in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+Marked 2 switch rules as full_case in process $proc$/home/elfo/Documents/ELEC5705/Project/rtl/cal_register.sv:14$69 in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+Marked 1 switch rules as full_case in process $proc$/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv:13$4 in module sign_extract.
+Marked 3 switch rules as full_case in process $proc$/home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv:11$1 in module sense_force.
+Removed a total of 0 dead cases.
+
+7.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 2 redundant assignments.
+Promoted 9 assignments to connections.
+
+7.4. Executing PROC_INIT pass (extract init attributes).
+
+7.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv:16$79'.
+Found async reset \rst_n in `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/cal_register.sv:14$69'.
+
+7.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~14 debug messages>
+
+7.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv:16$79'.
+     1/3: $0\dec_o[0:0]
+     2/3: $0\inc_o[0:0]
+     3/3: $0\count[5:0]
+Creating decoders for process `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/cal_register.sv:14$69'.
+     1/1: $0\trim_word[6:0]
+Creating decoders for process `\sign_extract.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv:13$4'.
+     1/5: $1\dec_i[0:0]
+     2/5: $1\inc_i[0:0]
+     3/5: $1\sign_neg[0:0]
+     4/5: $1\sign_pos[0:0]
+     5/5: $1\sign_valid[0:0]
+Creating decoders for process `\sense_force.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv:11$1'.
+     1/11: $3\ab_sel[0:0]
+     2/11: $3\channel[2:0]
+     3/11: $3\cal_active[0:0]
+     4/11: $2\ab_sel[0:0]
+     5/11: $2\channel[2:0]
+     6/11: $2\cal_mode_comp[0:0]
+     7/11: $2\cal_active[0:0]
+     8/11: $1\ab_sel[0:0]
+     9/11: $1\channel[2:0]
+    10/11: $1\cal_mode_comp[0:0]
+    11/11: $1\cal_active[0:0]
+
+7.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\sign_extract.\sign_valid' from process `\sign_extract.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv:13$4'.
+No latch inferred for signal `\sign_extract.\sign_pos' from process `\sign_extract.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv:13$4'.
+No latch inferred for signal `\sign_extract.\sign_neg' from process `\sign_extract.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv:13$4'.
+No latch inferred for signal `\sign_extract.\inc_i' from process `\sign_extract.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv:13$4'.
+No latch inferred for signal `\sign_extract.\dec_i' from process `\sign_extract.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv:13$4'.
+No latch inferred for signal `\sense_force.\cal_active' from process `\sense_force.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv:11$1'.
+No latch inferred for signal `\sense_force.\cal_mode_comp' from process `\sense_force.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv:11$1'.
+No latch inferred for signal `\sense_force.\channel' from process `\sense_force.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv:11$1'.
+No latch inferred for signal `\sense_force.\ab_sel' from process `\sense_force.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv:11$1'.
+
+7.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.\inc_o' using process `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv:16$79'.
+  created $adff cell `$procdff$227' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.\dec_o' using process `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv:16$79'.
+  created $adff cell `$procdff$228' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.\count' using process `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv:16$79'.
+  created $adff cell `$procdff$229' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.\trim_word' using process `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/cal_register.sv:14$69'.
+  created $adff cell `$procdff$230' with positive edge clock and negative level reset.
+
+7.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+7.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 6 empty switches in `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv:16$79'.
+Removing empty process `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv:16$79'.
+Found and cleaned up 4 empty switches in `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/cal_register.sv:14$69'.
+Removing empty process `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/cal_register.sv:14$69'.
+Found and cleaned up 1 empty switch in `\sign_extract.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv:13$4'.
+Removing empty process `sign_extract.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv:13$4'.
+Found and cleaned up 3 empty switches in `\sense_force.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv:11$1'.
+Removing empty process `sense_force.$proc$/home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv:11$1'.
+Cleaned up 14 empty switches.
+
+7.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module project_calibration_digital_top.
+<suppressed ~2 debug messages>
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+<suppressed ~1 debug messages>
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+<suppressed ~1 debug messages>
+Optimizing module sign_extract.
+Optimizing module sense_force.
+
+8. Executing OPT pass (performing simple optimizations).
+
+8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module project_calibration_digital_top.
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+Optimizing module sign_extract.
+Optimizing module sense_force.
+
+8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\project_calibration_digital_top'.
+<suppressed ~36 debug messages>
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Finding identical cells in module `\sign_extract'.
+Finding identical cells in module `\sense_force'.
+<suppressed ~39 debug messages>
+Removed a total of 25 cells.
+
+8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \project_calibration_digital_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \sign_extract..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \sense_force..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$187.
+    dead port 2/2 on $mux $procmux$171.
+    dead port 1/2 on $mux $procmux$169.
+    dead port 2/2 on $mux $procmux$213.
+    dead port 2/2 on $mux $procmux$207.
+    dead port 2/2 on $mux $procmux$155.
+    dead port 1/2 on $mux $procmux$153.
+    dead port 2/2 on $mux $procmux$201.
+    dead port 2/2 on $mux $procmux$195.
+    dead port 2/2 on $mux $procmux$189.
+Removed 10 multiplexer ports.
+<suppressed ~13 debug messages>
+
+8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \project_calibration_digital_top.
+  Optimizing cells in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+  Optimizing cells in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+  Optimizing cells in module \sign_extract.
+  Optimizing cells in module \sense_force.
+    New ctrl vector for $pmux cell $procmux$175: $auto$opt_reduce.cc:134:opt_pmux$232
+    New ctrl vector for $pmux cell $procmux$159: { $auto$opt_reduce.cc:134:opt_pmux$240 $auto$opt_reduce.cc:134:opt_pmux$238 $auto$opt_reduce.cc:134:opt_pmux$236 $auto$opt_reduce.cc:134:opt_pmux$234 }
+    New ctrl vector for $pmux cell $procmux$146: $auto$opt_reduce.cc:134:opt_pmux$242
+  Optimizing cells in module \sense_force.
+Performed a total of 3 changes.
+
+8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\project_calibration_digital_top'.
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Finding identical cells in module `\sign_extract'.
+<suppressed ~6 debug messages>
+Finding identical cells in module `\sense_force'.
+Removed a total of 2 cells.
+
+8.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$229 ($adff) from module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter (D = $procmux$118_Y, Q = \count).
+Adding EN signal on $procdff$230 ($adff) from module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register (D = $procmux$127_Y, Q = \trim_word).
+
+8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \sign_extract..
+Finding unused cells or wires in module \sense_force..
+Removed 2 unused cells and 125 unused wires.
+<suppressed ~7 debug messages>
+
+8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+<suppressed ~1 debug messages>
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+<suppressed ~1 debug messages>
+Optimizing module project_calibration_digital_top.
+Optimizing module sense_force.
+Optimizing module sign_extract.
+
+8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \project_calibration_digital_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \sense_force..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \sign_extract..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~11 debug messages>
+
+8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+  Optimizing cells in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+  Optimizing cells in module \project_calibration_digital_top.
+  Optimizing cells in module \sense_force.
+  Optimizing cells in module \sign_extract.
+Performed a total of 0 changes.
+
+8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Finding identical cells in module `\project_calibration_digital_top'.
+Finding identical cells in module `\sense_force'.
+Finding identical cells in module `\sign_extract'.
+Removed a total of 0 cells.
+
+8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module \sense_force..
+Finding unused cells or wires in module \sign_extract..
+
+8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+Optimizing module project_calibration_digital_top.
+Optimizing module sense_force.
+Optimizing module sign_extract.
+
+8.16. Finished OPT passes. (There is nothing left to do.)
+
+9. Executing FSM pass (extract and optimize FSM).
+
+9.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module \sense_force..
+Finding unused cells or wires in module \sign_extract..
+
+9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+10. Executing OPT pass (performing simple optimizations).
+
+10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+Optimizing module project_calibration_digital_top.
+Optimizing module sense_force.
+Optimizing module sign_extract.
+
+10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Finding identical cells in module `\project_calibration_digital_top'.
+Finding identical cells in module `\sense_force'.
+Finding identical cells in module `\sign_extract'.
+Removed a total of 0 cells.
+
+10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \project_calibration_digital_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \sense_force..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \sign_extract..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~11 debug messages>
+
+10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+  Optimizing cells in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+  Optimizing cells in module \project_calibration_digital_top.
+  Optimizing cells in module \sense_force.
+  Optimizing cells in module \sign_extract.
+Performed a total of 0 changes.
+
+10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Finding identical cells in module `\project_calibration_digital_top'.
+Finding identical cells in module `\sense_force'.
+Finding identical cells in module `\sign_extract'.
+Removed a total of 0 cells.
+
+10.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module \sense_force..
+Finding unused cells or wires in module \sign_extract..
+
+10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+Optimizing module project_calibration_digital_top.
+Optimizing module sense_force.
+Optimizing module sign_extract.
+
+10.9. Finished OPT passes. (There is nothing left to do.)
+
+11. Executing MEMORY pass.
+
+11.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+11.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+11.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+11.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+11.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+11.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module \sense_force..
+Finding unused cells or wires in module \sign_extract..
+
+11.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+11.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+11.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module \sense_force..
+Finding unused cells or wires in module \sign_extract..
+
+11.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+11.11. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+12. Executing OPT pass (performing simple optimizations).
+
+12.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+Optimizing module project_calibration_digital_top.
+Optimizing module sense_force.
+Optimizing module sign_extract.
+
+12.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Finding identical cells in module `\project_calibration_digital_top'.
+Finding identical cells in module `\sense_force'.
+Finding identical cells in module `\sign_extract'.
+Removed a total of 0 cells.
+
+12.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \project_calibration_digital_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \sense_force..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \sign_extract..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~11 debug messages>
+
+12.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+  Optimizing cells in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+  Optimizing cells in module \project_calibration_digital_top.
+  Optimizing cells in module \sense_force.
+  Optimizing cells in module \sign_extract.
+Performed a total of 0 changes.
+
+12.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Finding identical cells in module `\project_calibration_digital_top'.
+Finding identical cells in module `\sense_force'.
+Finding identical cells in module `\sign_extract'.
+Removed a total of 0 cells.
+
+12.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+12.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module \sense_force..
+Finding unused cells or wires in module \sign_extract..
+
+12.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+Optimizing module project_calibration_digital_top.
+Optimizing module sense_force.
+Optimizing module sign_extract.
+
+12.9. Finished OPT passes. (There is nothing left to do.)
+
+13. Executing TECHMAP pass (map to technology primitives).
+
+13.1. Executing Verilog-2005 frontend: /home/elfo/Documents/ELEC5705/A3/synthesis_experiment/local_tools/yosys_pkg/usr/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/home/elfo/Documents/ELEC5705/A3/synthesis_experiment/local_tools/yosys_pkg/usr/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `\$__div_mod_u'.
+Generating RTLIL representation for module `\$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `\$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Successfully finished Verilog frontend.
+
+13.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $reduce_or.
+Using template $paramod$d31bf4d7d72e59528d18fbd4f322e9d608532043\_90_pmux for cells of type $pmux.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $ne.
+Using extmapper simplemap for cells of type $reduce_and.
+Running "alumacc" on wrapper $extern:wrap:$add:A_SIGNED=0:A_WIDTH=7:B_SIGNED=0:B_WIDTH=7:Y_WIDTH=7:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:A_SIGNED=0:A_WIDTH=7:B_SIGNED=0:B_WIDTH=7:Y_WIDTH=7:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:A_SIGNED=0:A_WIDTH=7:B_SIGNED=0:B_WIDTH=7:Y_WIDTH=7:394426c56d1a028ba8fdd5469b163e04011def47.
+Using extmapper simplemap for cells of type $reduce_bool.
+Running "alumacc" on wrapper $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=7:B_SIGNED=0:B_WIDTH=7:Y_WIDTH=7:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=7:B_SIGNED=0:B_WIDTH=7:Y_WIDTH=7:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=7:B_SIGNED=0:B_WIDTH=7:Y_WIDTH=7:394426c56d1a028ba8fdd5469b163e04011def47.
+Using extmapper simplemap for cells of type $adffe.
+Using template $paramod$dbcdc7e8aa1a4080cea2deda6fdc8772064f4d90\_90_alu for cells of type $alu.
+Using template $paramod\_90_lcu\WIDTH=32'00000000000000000000000000000111 for cells of type $lcu.
+Using extmapper simplemap for cells of type $pos.
+Using extmapper simplemap for cells of type $or.
+Running "alumacc" on wrapper $extern:wrap:$add:A_SIGNED=0:A_WIDTH=6:B_SIGNED=0:B_WIDTH=6:Y_WIDTH=6:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:A_SIGNED=0:A_WIDTH=6:B_SIGNED=0:B_WIDTH=6:Y_WIDTH=6:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:A_SIGNED=0:A_WIDTH=6:B_SIGNED=0:B_WIDTH=6:Y_WIDTH=6:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=6:B_SIGNED=0:B_WIDTH=6:Y_WIDTH=6:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=6:B_SIGNED=0:B_WIDTH=6:Y_WIDTH=6:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=6:B_SIGNED=0:B_WIDTH=6:Y_WIDTH=6:394426c56d1a028ba8fdd5469b163e04011def47.
+Using extmapper simplemap for cells of type $adff.
+Using template $paramod$00298f3f8094950cb9a5ff2fda48d0d8bde8806c\_90_alu for cells of type $alu.
+Using template $paramod\_90_lcu\WIDTH=32'00000000000000000000000000000110 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~635 debug messages>
+
+14. Executing OPT pass (performing simple optimizations).
+
+14.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+<suppressed ~98 debug messages>
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+<suppressed ~79 debug messages>
+Optimizing module project_calibration_digital_top.
+<suppressed ~15 debug messages>
+Optimizing module sense_force.
+<suppressed ~111 debug messages>
+Optimizing module sign_extract.
+<suppressed ~1 debug messages>
+
+14.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+<suppressed ~75 debug messages>
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+<suppressed ~45 debug messages>
+Finding identical cells in module `\project_calibration_digital_top'.
+<suppressed ~18 debug messages>
+Finding identical cells in module `\sense_force'.
+<suppressed ~210 debug messages>
+Finding identical cells in module `\sign_extract'.
+Removed a total of 116 cells.
+
+14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \project_calibration_digital_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \sense_force..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \sign_extract..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+  Optimizing cells in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+  Optimizing cells in module \project_calibration_digital_top.
+  Optimizing cells in module \sense_force.
+  Optimizing cells in module \sign_extract.
+Performed a total of 0 changes.
+
+14.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Finding identical cells in module `\project_calibration_digital_top'.
+Finding identical cells in module `\sense_force'.
+Finding identical cells in module `\sign_extract'.
+Removed a total of 0 cells.
+
+14.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module \sense_force..
+Finding unused cells or wires in module \sign_extract..
+Removed 11 unused cells and 321 unused wires.
+<suppressed ~16 debug messages>
+
+14.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+Optimizing module project_calibration_digital_top.
+Optimizing module sense_force.
+Optimizing module sign_extract.
+
+14.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \project_calibration_digital_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \sense_force..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \sign_extract..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+  Optimizing cells in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+  Optimizing cells in module \project_calibration_digital_top.
+  Optimizing cells in module \sense_force.
+  Optimizing cells in module \sign_extract.
+Performed a total of 0 changes.
+
+14.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Finding identical cells in module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Finding identical cells in module `\project_calibration_digital_top'.
+Finding identical cells in module `\sense_force'.
+Finding identical cells in module `\sign_extract'.
+Removed a total of 0 cells.
+
+14.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module \sense_force..
+Finding unused cells or wires in module \sign_extract..
+
+14.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter.
+Optimizing module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register.
+Optimizing module project_calibration_digital_top.
+Optimizing module sense_force.
+Optimizing module sign_extract.
+
+14.16. Finished OPT passes. (There is nothing left to do.)
+
+15. Executing ABC pass (technology mapping using ABC).
+
+15.1. Extracting gate netlist of module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter' to `<abc-temp-dir>/input.blif'..
+Extracted 103 gates and 114 wires to a netlist network with 8 inputs and 9 outputs.
+
+15.1.1. Executing ABC.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ABC command line: "source <abc-temp-dir>/abc.script".
+ABC: 
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: Entered genlib library with 8 gates from file "<abc-temp-dir>/stdcells.genlib".
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+15.1.2. Re-integrating ABC results.
+ABC RESULTS:               NOT cells:       10
+ABC RESULTS:               MUX cells:        1
+ABC RESULTS:               XOR cells:        7
+ABC RESULTS:               AND cells:       33
+ABC RESULTS:                OR cells:       19
+ABC RESULTS:        internal signals:       97
+ABC RESULTS:           input signals:        8
+ABC RESULTS:          output signals:        9
+Removing temp directory.
+
+15.2. Extracting gate netlist of module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register' to `<abc-temp-dir>/input.blif'..
+Extracted 94 gates and 104 wires to a netlist network with 9 inputs and 8 outputs.
+
+15.2.1. Executing ABC.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ABC command line: "source <abc-temp-dir>/abc.script".
+ABC: 
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: Entered genlib library with 8 gates from file "<abc-temp-dir>/stdcells.genlib".
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+15.2.2. Re-integrating ABC results.
+ABC RESULTS:               NOT cells:        9
+ABC RESULTS:               MUX cells:        1
+ABC RESULTS:               XOR cells:        8
+ABC RESULTS:               AND cells:       25
+ABC RESULTS:                OR cells:       12
+ABC RESULTS:        internal signals:       87
+ABC RESULTS:           input signals:        9
+ABC RESULTS:          output signals:        8
+Removing temp directory.
+
+15.3. Extracting gate netlist of module `\project_calibration_digital_top' to `<abc-temp-dir>/input.blif'..
+Extracted 37 gates and 43 wires to a netlist network with 6 inputs and 12 outputs.
+
+15.3.1. Executing ABC.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ABC command line: "source <abc-temp-dir>/abc.script".
+ABC: 
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: Entered genlib library with 8 gates from file "<abc-temp-dir>/stdcells.genlib".
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+15.3.2. Re-integrating ABC results.
+ABC RESULTS:               NOT cells:        3
+ABC RESULTS:               AND cells:       24
+ABC RESULTS:        internal signals:       25
+ABC RESULTS:           input signals:        6
+ABC RESULTS:          output signals:       12
+Removing temp directory.
+
+15.4. Extracting gate netlist of module `\sense_force' to `<abc-temp-dir>/input.blif'..
+Extracted 89 gates and 101 wires to a netlist network with 10 inputs and 6 outputs.
+
+15.4.1. Executing ABC.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ABC command line: "source <abc-temp-dir>/abc.script".
+ABC: 
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: Entered genlib library with 8 gates from file "<abc-temp-dir>/stdcells.genlib".
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+15.4.2. Re-integrating ABC results.
+ABC RESULTS:               NOT cells:        8
+ABC RESULTS:                OR cells:       16
+ABC RESULTS:               AND cells:       42
+ABC RESULTS:        internal signals:       85
+ABC RESULTS:           input signals:       10
+ABC RESULTS:          output signals:        6
+Removing temp directory.
+
+15.5. Extracting gate netlist of module `\sign_extract' to `<abc-temp-dir>/input.blif'..
+Extracted 8 gates and 12 wires to a netlist network with 3 inputs and 3 outputs.
+
+15.5.1. Executing ABC.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ABC command line: "source <abc-temp-dir>/abc.script".
+ABC: 
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: Entered genlib library with 8 gates from file "<abc-temp-dir>/stdcells.genlib".
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+15.5.2. Re-integrating ABC results.
+ABC RESULTS:               NOT cells:        2
+ABC RESULTS:               XOR cells:        1
+ABC RESULTS:               AND cells:        5
+ABC RESULTS:        internal signals:        6
+ABC RESULTS:           input signals:        3
+ABC RESULTS:          output signals:        3
+Removing temp directory.
+
+16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter..
+Finding unused cells or wires in module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register..
+Finding unused cells or wires in module \project_calibration_digital_top..
+Finding unused cells or wires in module \sense_force..
+Finding unused cells or wires in module \sign_extract..
+Removed 0 unused cells and 250 unused wires.
+<suppressed ~5 debug messages>
+
+17. Printing statistics.
+
+=== $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter ===
+
+   Number of wires:                 72
+   Number of wire bits:             82
+   Number of public wires:           7
+   Number of public wire bits:      12
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 78
+     $_AND_                         33
+     $_DFFE_PN0P_                    5
+     $_DFFE_PN1P_                    1
+     $_DFF_PN0_                      2
+     $_MUX_                          1
+     $_NOT_                         10
+     $_OR_                          19
+     $_XOR_                          7
+
+=== $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register ===
+
+   Number of wires:                 54
+   Number of wire bits:             66
+   Number of public wires:           5
+   Number of public wire bits:      11
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 62
+     $_AND_                         25
+     $_DFFE_PN0P_                    7
+     $_MUX_                          1
+     $_NOT_                          9
+     $_OR_                          12
+     $_XOR_                          8
+
+=== project_calibration_digital_top ===
+
+   Number of wires:                 65
+   Number of wire bits:            147
+   Number of public wires:          50
+   Number of public wire bits:     132
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 41
+     $_AND_                         24
+     $_NOT_                          3
+     $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter      6
+     $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register      6
+     sense_force                     1
+     sign_extract                    1
+
+=== sense_force ===
+
+   Number of wires:                 67
+   Number of wire bits:             91
+   Number of public wires:           7
+   Number of public wire bits:      31
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 66
+     $_AND_                         42
+     $_NOT_                          8
+     $_OR_                          16
+
+=== sign_extract ===
+
+   Number of wires:                 15
+   Number of wire bits:             15
+   Number of public wires:          10
+   Number of public wire bits:      10
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  8
+     $_AND_                          5
+     $_NOT_                          2
+     $_XOR_                          1
+
+=== design hierarchy ===
+
+   project_calibration_digital_top      1
+     $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter      6
+     $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register      6
+     sense_force                     1
+     sign_extract                    1
+
+   Number of wires:                903
+   Number of wire bits:           1141
+   Number of public wires:         139
+   Number of public wire bits:     311
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                941
+     $_AND_                        419
+     $_DFFE_PN0P_                   72
+     $_DFFE_PN1P_                    6
+     $_DFF_PN0_                     12
+     $_MUX_                         12
+     $_NOT_                        127
+     $_OR_                         202
+     $_XOR_                         91
+
+18. Executing JSON backend.
+
+19. Executing Verilog backend.
+
+19.1. Executing BMUXMAP pass.
+
+19.2. Executing DEMUXMAP pass.
+Dumping module `$paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter'.
+Dumping module `$paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register'.
+Dumping module `\project_calibration_digital_top'.
+Dumping module `\sense_force'.
+Dumping module `\sign_extract'.
+
+20. Generating Graphviz representation of design.
+Writing dot description to `project_calibration_digital_top.dot'.
+Dumping module $paramod$6bc66b2e6b2e17a15e8101c411e128f6c1aae316\lpf_counter to page 1.
+Dumping module $paramod$a734803f1dcac5b98a505a661a7d77856a8bdc90\cal_register to page 2.
+Dumping module project_calibration_digital_top to page 3.
+Dumping module sense_force to page 4.
+Dumping module sign_extract to page 5.
+
+End of script. Logfile hash: 26b82347fe, CPU: user 0.12s system 0.00s, MEM: 16.07 MB peak
+Yosys 0.33 (git sha1 2584903a060)
+Time spent: 52% 1x abc (0 sec), 13% 15x opt_expr (0 sec), ...

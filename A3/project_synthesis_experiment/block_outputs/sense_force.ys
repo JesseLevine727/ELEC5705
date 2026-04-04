@@ -1,0 +1,16 @@
+read_verilog -sv /home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv
+hierarchy -top sense_force
+proc
+opt
+fsm
+opt
+memory
+opt
+techmap
+opt
+abc -g simple
+opt_clean
+stat
+write_json /home/elfo/Documents/ELEC5705/A3/project_synthesis_experiment/block_outputs/sense_force.json
+write_verilog -noattr /home/elfo/Documents/ELEC5705/A3/project_synthesis_experiment/block_outputs/sense_force_netlist.v
+show -format dot -prefix /home/elfo/Documents/ELEC5705/A3/project_synthesis_experiment/block_outputs/sense_force

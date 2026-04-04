@@ -1,0 +1,21 @@
+read_verilog -sv /home/elfo/Documents/ELEC5705/Project/rtl/sense_force.sv
+read_verilog -sv /home/elfo/Documents/ELEC5705/Project/rtl/sign_extract.sv
+read_verilog -sv /home/elfo/Documents/ELEC5705/Project/rtl/lpf_counter.sv
+read_verilog -sv /home/elfo/Documents/ELEC5705/Project/rtl/cal_register.sv
+read_verilog -sv project_calibration_digital_top.sv
+
+hierarchy -top project_calibration_digital_top
+proc
+opt
+fsm
+opt
+memory
+opt
+techmap
+opt
+abc -g simple
+opt_clean
+stat
+write_json project_calibration_digital_top.json
+write_verilog -noattr project_calibration_digital_top_netlist.v
+show -format dot -prefix project_calibration_digital_top

@@ -33,8 +33,9 @@ module background_calibration_plant #(
     real noise15;
     real noise16;
     real comp_scale;
-    real dac_trim_scale;
     real diff_lsb;
+    real residue_lsb;
+    real dynamic_comp_gain;
     reg  [14:0] alt_code;
     reg  d15_ideal;
     reg  d16_ideal;
@@ -131,13 +132,15 @@ module background_calibration_plant #(
     endfunction
 
     always @* begin
-        comp_scale = 1.0 / (8192.0 * 4.0);
+        comp_scale = 1.0 / (8192.0 * 6.0);
         alt_code = with_alt_x(raw_code, alt_x_code(channel, ab_sel));
         vdac15 = code_to_vdac(raw_code, dac_trim0, dac_trim1, dac_trim2, dac_trim3, dac_trim4);
         vdac16 = code_to_vdac(alt_code, dac_trim0, dac_trim1, dac_trim2, dac_trim3, dac_trim4);
         vdac15_ideal = code_to_vdac_ideal(raw_code);
         vdac16_ideal = code_to_vdac_ideal(alt_code);
-        delta_off = -(COMP_BASE_ERR - comp_trim) * comp_scale;
+        residue_lsb = 0.0;
+        dynamic_comp_gain = 1.0;
+        delta_off = 0.0;
         noise15 = ((noise_state[5:0] / 63.0) - 0.5) * (cal_mode_comp ? (2.0 / 8192.0) : (0.5 / 8192.0));
         noise16 = ((noise_state[11:6] / 63.0) - 0.5) * (cal_mode_comp ? (1.0 / 8192.0) : (0.5 / 8192.0));
         vin_eval = vin_norm;
@@ -153,6 +156,9 @@ module background_calibration_plant #(
             if (cal_mode_comp) begin
                 // Repeat the same DAC code. Cycle 15 uses mode2, cycle 16 uses mode1.
                 vin_eval = vdac15_ideal + ((noise_state[15:12] / 15.0) - 0.5) * (2.0 / 8192.0);
+                residue_lsb = (vin_eval - vdac15_ideal) * 8192.0;
+                dynamic_comp_gain = 1.0 + residue_lsb;
+                delta_off = -(COMP_BASE_ERR - comp_trim) * comp_scale * dynamic_comp_gain;
                 d15_ideal = (vin_eval >= vdac15_ideal);
                 d16_ideal = (vin_eval >= (vdac15_ideal + delta_off));
                 d15 = (vin_eval + noise15 >= vdac15);
