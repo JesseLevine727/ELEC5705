@@ -263,7 +263,7 @@ These sanity-check plots serve as a digital-path validation step. They confirm t
 \end{figure}
 
 \subsection{Background Calibration Convergence}
-The full background-calibration experiment includes one comparator loop and five DAC loops. Figure~\ref{fig:trimconv} plots the six trim words as the background calibration proceeds. The long settling time is a direct result of sparse trigger-code activation rather than continuous correction on every conversion.
+The full background-calibration experiment includes one comparator channel and five DAC-capacitor channels. Figure~\ref{fig:trimconv} plots the six trim words as the background calibration proceeds. These traces show internal register evolution rather than direct ADC performance, so they indicate when each calibration channel reaches its final stored correction code. The long settling time is a direct result of sparse trigger-code activation rather than continuous correction on every conversion.
 
 \begin{figure}[H]
 \centering
@@ -299,7 +299,7 @@ The full background-calibration experiment includes one comparator loop and five
 \label{fig:trimconv}
 \end{figure}
 
-To mirror the form of the paper's Fig.~22 \cite{ding2017}, Figure~\ref{fig:sndrconv} plots the SNDR obtained by evaluating the implemented DAC-mismatch equations and the implemented two-mode comparator model at the trim states recorded during the background-calibration run. The plotted curve is generated directly from those sampled states and then smoothed for presentation so the long-term convergence trend is easier to read. After convergence, the evaluated SNDR reaches approximately \SI{73.9}{dB}.
+To mirror the form of the paper's Fig.~22 \cite{ding2017}, Figure~\ref{fig:sndrconv} plots the system-level SNDR obtained by evaluating the implemented DAC-mismatch equations and the implemented two-mode comparator model at the trim states recorded during the background-calibration run. This figure therefore represents ADC performance convergence, not the exact moment when every internal trim register reaches its final code. The plotted curve is generated directly from those sampled states and then smoothed for presentation so the long-term convergence trend is easier to read. After convergence, the evaluated SNDR reaches approximately \SI{73.9}{dB}.
 
 \begin{figure}[H]
 \centering
@@ -327,7 +327,7 @@ To mirror the form of the paper's Fig.~22 \cite{ding2017}, Figure~\ref{fig:sndrc
 \label{fig:sndrconv}
 \end{figure}
 
-Figure~\ref{fig:spectra} recreates the paper's \cite{ding2017} three-scenario spectrum comparison using the same implemented dynamic SAR output model: without calibration, with comparator-offset calibration only, and with a fully corrected comparator-plus-DAC trim state. Figure~\ref{fig:sndrconv} shows how the calibrated SNDR develops over the logged background-calibration run, while Figure~\ref{fig:spectra} compares three representative operating points from that same model. Taken together, they show both the convergence process and the final spectral improvement. In these results, comparator calibration removes the dominant mode-dependent comparator distortion, and the calibrated DAC weights contribute a further improvement of roughly \SI{3.1}{dB} in SNDR.
+Figure~\ref{fig:spectra} recreates the paper's \cite{ding2017} three-scenario spectrum comparison using the same implemented dynamic SAR output model: without calibration, with comparator-offset calibration only, and with a fully corrected comparator-plus-DAC trim state. Figure~\ref{fig:sndrconv} shows how the calibrated SNDR develops over the logged background-calibration run, while Figure~\ref{fig:spectra} compares three representative operating points from that same model. Taken together, they show both the convergence process and the final spectral improvement. In these results, comparator calibration removes the dominant mode-dependent comparator distortion, and the calibrated DAC weights contribute a further improvement of roughly \SI{3.1}{dB} in SNDR. Because SNDR is a system-level performance metric, it approaches its final value before every individual trim channel reaches its exact final stored code.
 
 Using the standard relation
 \[
@@ -368,7 +368,7 @@ the three spectral cases correspond to approximately 10.2 bits without calibrati
 \label{fig:spectra}
 \end{figure}
 
-The main convergence metrics from the background-calibration run are summarized in Table~\ref{tab:convergence}.
+The main convergence metrics from the background-calibration run are summarized in Table~\ref{tab:convergence}. These numbers should be read as internal channel-settling times: they report when each trim register first reaches its final stored correction value, not when the overall ADC SNDR first appears visually settled in Figure~\ref{fig:sndrconv}.
 
 \begin{table}[H]
 \centering
