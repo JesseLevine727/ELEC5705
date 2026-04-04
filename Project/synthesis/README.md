@@ -9,6 +9,8 @@ This directory synthesizes only the explicitly implemented digital calibration p
 
 The behavioral ADC and analog calibration plant are intentionally excluded.
 
+The synthesis scripts are now project-local. They live under `Project/synthesis/`, and by default they look for local Yosys tooling in `Project/synthesis/local_tools/`. If that directory is absent, they fall back to the existing `A3/synthesis_experiment/local_tools/` tool package.
+
 ## Outputs
 
 Running `bash run_local_flow.sh` generates:

@@ -2,8 +2,14 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$ROOT_DIR/.." && pwd)"
 OUT_DIR="$ROOT_DIR/block_outputs"
-YOSYS_PKG_DIR="/home/elfo/Documents/ELEC5705/A3/synthesis_experiment/local_tools/yosys_pkg"
+TOOLS_DIR="$ROOT_DIR/local_tools"
+FALLBACK_TOOLS_DIR="$(cd "$ROOT_DIR/../../A3/synthesis_experiment/local_tools" 2>/dev/null && pwd || true)"
+if [[ ! -d "$TOOLS_DIR/yosys_pkg" && -n "$FALLBACK_TOOLS_DIR" ]]; then
+  TOOLS_DIR="$FALLBACK_TOOLS_DIR"
+fi
+YOSYS_PKG_DIR="$TOOLS_DIR/yosys_pkg"
 YOSYS_BIN="$YOSYS_PKG_DIR/usr/bin/yosys"
 
 mkdir -p "$OUT_DIR"
@@ -21,7 +27,7 @@ run_one() {
   local script="$OUT_DIR/${module}.ys"
 
   cat > "$script" <<EOF
-read_verilog -sv /home/elfo/Documents/ELEC5705/Project/rtl/${module}.sv
+read_verilog -sv $PROJECT_ROOT/rtl/${module}.sv
 hierarchy -top ${module}
 proc
 opt

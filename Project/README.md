@@ -27,3 +27,6 @@ Implementation scaffold:
 - `sim/`: testbenches and local run scripts
 - `notes/`: project planning and architecture notes
 - `results/`: simulation outputs and generated artifacts
+- `report/`: LaTeX report source, PDF, and plot data
+- `synthesis/`: synthesized digital-calibration artifacts and block views
+- `tools/`: helper scripts for regenerating report data and local model evaluation

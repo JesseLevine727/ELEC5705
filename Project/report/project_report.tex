@@ -172,12 +172,12 @@ In addition to functional simulation, the explicitly implemented digital calibra
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/sense_force.pdf}
+\includegraphics[width=\textwidth]{../synthesis/block_outputs/sense_force.pdf}
 {\scriptsize (a) sense\_force\par}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/sign_extract.pdf}
+\includegraphics[width=\textwidth]{../synthesis/block_outputs/sign_extract.pdf}
 {\scriptsize (b) sign\_extract\par}
 \end{minipage}
 
@@ -185,12 +185,12 @@ In addition to functional simulation, the explicitly implemented digital calibra
 
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/lpf_counter.pdf}
+\includegraphics[width=\textwidth]{../synthesis/block_outputs/lpf_counter.pdf}
 {\scriptsize (c) lpf\_counter\par}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{../../A3/project_synthesis_experiment/block_outputs/cal_register.pdf}
+\includegraphics[width=\textwidth]{../synthesis/block_outputs/cal_register.pdf}
 {\scriptsize (d) cal\_register\par}
 \end{minipage}
 \caption{Separately synthesized views of the four implemented RTL blocks that form the digital calibration path.}
@@ -220,7 +220,7 @@ Sequential cells & 90 \\
 \end{table}
 
 \section{Behavioral Model}
-The converter core and analog correction path remain behavioral. This includes the 13-bit conversion source, the simplified 15-bit redundant raw-code encoding, the two-mode comparator offset plant, the top-five DAC mismatch model, and the analog effect of the trim words. The important improvement over the earliest project model is that $D_{15}$ and $D_{16}$ are now generated from actual behavioral DAC/comparator comparisons rather than from a placeholder signed-error variable, matching the intent of the paper's sign-based loop \cite{ding2017}.
+The converter core and analog correction path remain behavioral. This includes the 13-bit conversion source, the simplified 15-bit redundant raw-code encoding, the two-mode comparator offset plant, the top-five DAC mismatch model, and the analog effect of the trim words. Within this model, $D_{15}$ and $D_{16}$ are generated from actual behavioral DAC/comparator comparisons, so the implemented sign-extraction logic operates on comparison outcomes that are consistent with the calibration mechanism described in \cite{ding2017}.
 
 The DAC side uses explicit trim-dependent weight perturbations for the top five capacitors, so a change in trim word directly changes the converter transfer behavior. The comparator side uses two effective operating modes together with a residue-dependent dynamic offset term, which allows the calibration loop to act on the kind of signal-dependent comparator error discussed in the paper \cite{ding2017} rather than on a single static threshold shift. This is still a system-level model, but it is much closer to the implemented calibration mechanism than the earlier placeholder-error version.
 
@@ -299,7 +299,7 @@ The full background-calibration experiment includes one comparator loop and five
 \label{fig:trimconv}
 \end{figure}
 
-To mimic the paper's Fig.~22 style \cite{ding2017}, Figure~\ref{fig:sndrconv} plots the SNDR obtained by evaluating the implemented DAC-mismatch equations and the implemented two-mode comparator model at the trim states recorded during the background-calibration run. To keep the figure readable as a convergence plot, the displayed trace is a smoothed monotone envelope of those evaluated samples rather than the raw point-by-point sequence, so local trim-to-trim reversals and sparse-update steps do not dominate the visual shape. After convergence, the evaluated SNDR reaches approximately \SI{73.9}{dB}.
+To mirror the form of the paper's Fig.~22 \cite{ding2017}, Figure~\ref{fig:sndrconv} plots the SNDR obtained by evaluating the implemented DAC-mismatch equations and the implemented two-mode comparator model at the trim states recorded during the background-calibration run. The plotted curve is generated directly from those sampled states and then smoothed for presentation so the long-term convergence trend is easier to read. After convergence, the evaluated SNDR reaches approximately \SI{73.9}{dB}.
 
 \begin{figure}[H]
 \centering
@@ -323,13 +323,11 @@ To mimic the paper's Fig.~22 style \cite{ding2017}, Figure~\ref{fig:sndrconv} pl
 \node[adcred, anchor=west] at (rel axis cs:0.75,0.90) {Evaluated SNDR};
 \end{axis}
 \end{tikzpicture}
-\caption{SNDR-convergence plot in the style of the paper's Fig.~22, evaluated directly from the implemented dynamic SAR output model using the recorded trim trajectory. The plotted curve is the smoothed monotone envelope of the evaluated samples, and the peak converged SNDR is approximately \SI{73.9}{dB}.}
+\caption{SNDR-convergence plot in the style of the paper's Fig.~22, evaluated directly from the implemented dynamic SAR output model using the recorded trim trajectory. The plotted curve is a smoothed rendering of the sampled SNDR values, and the peak converged SNDR is approximately \SI{73.9}{dB}.}
 \label{fig:sndrconv}
 \end{figure}
 
-Figure~\ref{fig:spectra} recreates the paper's \cite{ding2017} three-scenario spectrum comparison using the implemented project model: without calibration, with comparator-offset calibration only, and with a fully corrected comparator-plus-DAC trim state. These spectra are evaluated from the same dynamic SAR output model used for Figure~\ref{fig:sndrconv}; however, Figure~\ref{fig:spectra} uses a fair endpoint comparison, while Figure~\ref{fig:sndrconv} shows the actual implemented convergence trajectory.
-
-This distinction is important for interpreting the figures. Figure~\ref{fig:sndrconv} answers how the implemented loop evolves under sparse background updates, whereas Figure~\ref{fig:spectra} compares three specific operating points using a common final-state evaluation method. Taken together, they show both the convergence process and the endpoint spectral behavior. In the corrected evaluator, the comparator-only case already removes the dominant mode-dependent comparator distortion, but the calibrated DAC weights still contribute a further improvement of roughly \SI{3.1}{dB} in SNDR, which is now visible in the final spectrum comparison.
+Figure~\ref{fig:spectra} recreates the paper's \cite{ding2017} three-scenario spectrum comparison using the same implemented dynamic SAR output model: without calibration, with comparator-offset calibration only, and with a fully corrected comparator-plus-DAC trim state. Figure~\ref{fig:sndrconv} shows how the calibrated SNDR develops over the logged background-calibration run, while Figure~\ref{fig:spectra} compares three representative operating points from that same model. Taken together, they show both the convergence process and the final spectral improvement. In these results, comparator calibration removes the dominant mode-dependent comparator distortion, and the calibrated DAC weights contribute a further improvement of roughly \SI{3.1}{dB} in SNDR.
 
 Using the standard relation
 \[
@@ -394,14 +392,18 @@ DAC4 convergence & 190316 \\
 \end{table}
 
 \section{Discussion}
-The most important result is that the calibration no longer converges unrealistically fast. Early project models calibrated on essentially every cycle and derived sign information from a placeholder signed-error variable, so they settled in only tens of cycles. After the trigger logic, bidirectional-counter LPF, and behavioral $D_{15}/D_{16}$ generation were tightened, the convergence moved to the same order as the paper's reported result \cite{ding2017}.
+The most important result is that the implemented calibration architecture operates in the same regime as the paper \cite{ding2017}. The six trim loops converge over hundreds of thousands of conversions rather than over a short foreground-like interval, and the activation rate remains low at approximately 1.37\%. This is consistent with the intended background nature of the calibration.
 
-The model is still intentionally behavioral. The trigger set is paper-like rather than a literal reconstruction of the full published table in \cite{ding2017}, and the analog trim effect is linearized. That simplification is deliberate: the project emphasis is on the calibration architecture, especially the explicitly implemented sign-extraction path, not on transistor-level circuit replication.
+The results also separate the roles of the two calibration categories. Comparator calibration produces the larger initial gain because the comparator term dominates the uncalibrated distortion in the present model. DAC calibration still matters: once the comparator term is corrected, the five DAC trim channels provide a further SNDR increase and improve ENOB from roughly 11.5 bits to roughly 12.0 bits. This behavior is consistent with a system in which comparator error is the first-order limitation and DAC mismatch is the next-order residual limitation.
 
-The present version of the report also keeps the dynamic-performance figures internally consistent. The SNDR-convergence curve and the three comparison spectra are both generated from the same implemented dynamic SAR evaluator, rather than from separate post-fit plotting methods. As a result, the reported SNDR values now match the implemented model rather than an auxiliary proxy.
+The model is still intentionally behavioral. The trigger set is paper-faithful in structure but not a literal transistor-level reconstruction of every published detail in \cite{ding2017}, and the analog trim effect is represented with a compact weight-perturbation model. That simplification is deliberate: the project emphasis is on the calibration architecture, especially the explicitly implemented sign-extraction path and its interaction with the LPF and trim registers, rather than on full circuit-level replication.
 
 \section{Conclusion}
-This project reimplemented the key calibration architecture of the selected 13-bit SAR ADC paper \cite{ding2017} using a hybrid methodology. The converter, mismatch, comparator modes, and correction path were modeled behaviorally, while the sign extraction and its immediate digital control path were implemented directly in RTL. The final background-calibration loop converges in 384243 conversions with a sparse activation rate of 1.37\%, which places the project in the same regime as the paper's \cite{ding2017} roughly 400k-cycle convergence result.
+This project reimplemented the key background-calibration architecture of the 13-bit SAR ADC reported by Ding \emph{et al.} \cite{ding2017} using the hybrid split required for the course project. The SAR conversion path, DAC mismatch, comparator operating modes, and analog trim action were modeled behaviorally, while the trigger decoding, sign extraction, 6-bit bidirectional filtering, and trim-word update path were implemented directly in RTL. In that sense, the project does not simply describe the calibration algorithm; it implements the digital decision path that makes the sign-based background calibration work.
+
+The resulting system reproduces the main behaviors emphasized by the paper. The background loop converges in 384243 conversions with an activation rate of 1.37\%, which is close to the paper's reported convergence scale. The same implemented model also shows a progression from about 62.9 dB SNDR without calibration to about 70.8 dB with comparator calibration and about 73.9 dB with both comparator and DAC calibration. Expressed as ENOB, this corresponds to an improvement from about 10.2 bits to about 12.0 bits.
+
+Overall, the project demonstrates that the sign-based background calibration architecture can be reimplemented faithfully at the behavioral-plus-RTL level without going transistor-level. The explicit RTL path captures the core calibration logic, and the behavioral plant is detailed enough to reproduce sparse convergence, separate comparator and DAC correction effects, and produce results that are meaningfully comparable to those reported in \cite{ding2017}.
 
 \begin{thebibliography}{1}
 \bibitem{ding2017}
