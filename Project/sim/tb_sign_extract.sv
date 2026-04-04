@@ -48,19 +48,19 @@ module tb_sign_extract;
         check_case(0, 0, 0);
 
         valid = 1; cal_mode_comp = 1; d15 = 0; d16 = 1;
-        check_case(1, 1, 0);
+        check_case(1, 0, 1);
 
         valid = 1; cal_mode_comp = 1; d15 = 1; d16 = 0;
-        check_case(1, 0, 1);
+        check_case(1, 1, 0);
 
         valid = 1; cal_mode_comp = 1; d15 = 1; d16 = 1;
         check_case(0, 0, 0);
 
         valid = 1; cal_mode_comp = 0; ab_sel = 0; d15 = 0; d16 = 1;
-        check_case(1, 1, 0);
+        check_case(1, 0, 1);
 
         valid = 1; cal_mode_comp = 0; ab_sel = 0; d15 = 1; d16 = 0;
-        check_case(1, 0, 1);
+        check_case(1, 1, 0);
 
         valid = 1; cal_mode_comp = 0; ab_sel = 1; d15 = 0; d16 = 1;
         check_case(1, 0, 1);

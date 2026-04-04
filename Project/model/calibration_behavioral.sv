@@ -26,25 +26,25 @@ module calibration_behavioral #(
 
         if (err_now > 0) begin
             if (cal_mode_comp) begin
-                d15 = 1'b0;
-                d16 = 1'b1;
-            end else if (!ab_sel) begin
-                d15 = 1'b0;
-                d16 = 1'b1;
-            end else begin
                 d15 = 1'b1;
                 d16 = 1'b0;
+            end else if (!ab_sel) begin
+                d15 = 1'b1;
+                d16 = 1'b0;
+            end else begin
+                d15 = 1'b0;
+                d16 = 1'b1;
             end
         end else if (err_now < 0) begin
             if (cal_mode_comp) begin
-                d15 = 1'b1;
-                d16 = 1'b0;
-            end else if (!ab_sel) begin
-                d15 = 1'b1;
-                d16 = 1'b0;
-            end else begin
                 d15 = 1'b0;
                 d16 = 1'b1;
+            end else if (!ab_sel) begin
+                d15 = 1'b0;
+                d16 = 1'b1;
+            end else begin
+                d15 = 1'b1;
+                d16 = 1'b0;
             end
         end else begin
             d15 = 1'b0;

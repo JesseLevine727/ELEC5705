@@ -20,23 +20,13 @@ module sign_extract (
         if (valid && (d15 ^ d16)) begin
             sign_valid = 1'b1;
 
-            if (cal_mode_comp) begin
-                // Comparator calibration:
-                // 01 => positive offset difference, 10 => negative.
-                sign_pos = (~d15) & d16;
-                sign_neg = d15 & (~d16);
-            end else begin
-                // DAC calibration:
-                // ab_sel=0 means cycle15 uses A and cycle16 uses B.
-                // ab_sel=1 means cycle15 uses B and cycle16 uses A.
-                if (!ab_sel) begin
-                    sign_pos = (~d15) & d16;
-                    sign_neg = d15 & (~d16);
-                end else begin
-                    sign_pos = d15 & (~d16);
-                    sign_neg = (~d15) & d16;
-                end
-            end
+            // Project sign convention:
+            // sign_pos/sign_neg indicate the correction direction required by
+            // the analog trim hardware, not an abstract mathematical sign.
+            // For the current calibration orientation, 10 requests increment
+            // and 01 requests decrement.
+            sign_pos = d15 & (~d16);
+            sign_neg = (~d15) & d16;
 
             inc_i = sign_pos;
             dec_i = sign_neg;
