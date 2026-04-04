@@ -6,6 +6,8 @@ module tb_background_calibration;
 
     wire [14:0] raw_code;
     wire [15:0] noise_state;
+    wire [12:0] final_code;
+    real vin_norm;
 
     wire cal_active;
     wire cal_mode_comp;
@@ -51,11 +53,13 @@ module tb_background_calibration;
     integer dac3_done_cycle;
     integer dac4_done_cycle;
 
-    raw_code_stream code_gen (
+    behavioral_sar_raw code_gen (
         .clk(clk),
         .rst_n(rst_n),
         .raw_code(raw_code),
-        .noise_state(noise_state)
+        .noise_state(noise_state),
+        .final_code(final_code),
+        .vin_norm(vin_norm)
     );
 
     sense_force sf (
@@ -125,7 +129,7 @@ module tb_background_calibration;
         dac4_done_cycle = -1;
 
         fd = $fopen("results/background_calibration_log.csv", "w");
-        $fwrite(fd, "cycle,raw_code,cal_active,mode_comp,channel,ab_sel,d15,d16,noise_flip,error,trim0,trim1,trim2,trim3,trim4,trim5,count0,count1,count2,count3,count4,count5\n");
+        $fwrite(fd, "cycle,raw_code,final_code,vin_norm,cal_active,mode_comp,channel,ab_sel,d15,d16,noise_flip,error,trim0,trim1,trim2,trim3,trim4,trim5,count0,count1,count2,count3,count4,count5\n");
 
         repeat (4) @(posedge clk);
         rst_n = 1'b1;
@@ -136,8 +140,8 @@ module tb_background_calibration;
             if (cal_active)
                 active_count = active_count + 1;
 
-            $fwrite(fd, "%0d,%0h,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d\n",
-                cycle_count, raw_code, cal_active, cal_mode_comp, channel, ab_sel, d15, d16, noise_flip, active_error,
+            $fwrite(fd, "%0d,%0h,%0d,%.6f,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d\n",
+                cycle_count, raw_code, final_code, vin_norm, cal_active, cal_mode_comp, channel, ab_sel, d15, d16, noise_flip, active_error,
                 trim_0, trim_1, trim_2, trim_3, trim_4, trim_5,
                 count_0, count_1, count_2, count_3, count_4, count_5);
 

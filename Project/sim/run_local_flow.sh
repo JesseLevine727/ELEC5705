@@ -38,7 +38,7 @@ rm -f sim/tb_background_calibration.out
   rtl/sense_force.sv \
   rtl/lpf_counter.sv \
   rtl/cal_register.sv \
-  model/raw_code_stream.sv \
+  model/behavioral_sar_raw.sv \
   model/background_calibration_plant.sv \
   sim/tb_background_calibration.sv
 "$VVP_BIN" sim/tb_background_calibration.out
